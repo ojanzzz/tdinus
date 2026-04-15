@@ -1,0 +1,38 @@
+/* Existing CSS */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+.social-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Footer social styles */
+.footer-social-list {
+    display: flex;
+    gap: 15px;
+}
+
+.footer-social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: white;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.footer-social-link:hover {
+    transform: translateY(-3px) scale(1.1);
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.footer-social-link.facebook:hover { background: #1877f2; }
+.footer-social-link.instagram:hover { background: #e4405f; }
+.footer-social-link.x:hover { background: #000; }
