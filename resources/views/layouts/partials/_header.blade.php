@@ -27,9 +27,7 @@
                                         <button type="submit" class="btn-outline">Logout</button>
                                     </form>
                                 @else
-                                    {{-- <a href="{{ route('login.show', 'admin') }}" class="btn-outline">Login Admin</a>
-                                    --}}
-                                    <a href="{{ route('login.show', 'member') }}" class="btn-primary">Login Member</a>
+                                    <a href="{{ route('login.member') }}" class="btn-primary">Login Member</a>
                                 @endauth
                             </div>
                         </div>
@@ -66,8 +64,7 @@
                         <button type="submit" class="btn-outline">Logout</button>
                     </form>
                 @else
-                    {{-- <a href="{{ route('login.show', 'admin') }}" class="btn-outline">Login Admin</a> --}}
-                    <a href="{{ route('login.show', 'member') }}" class="btn-primary">Login Member</a>
+                    <a href="{{ route('login.member') }}" class="btn-primary">Login Member</a>
                 @endauth
             </div>
         </div>

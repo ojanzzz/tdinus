@@ -13,8 +13,8 @@
 <a href="{{ route('admin.news.index') }}" class="admin-link">Berita</a>
                 <a href="/admin/pelatihan" class="admin-link">Pelatihan</a>
                 <a href="/admin/sertifikat" class="admin-link">Sertifikat</a>
-                <a href="{{ route('admin.admin-settings.index') }}" class="admin-link">Pengaturan Admin</a>
-                <a href="{{ route('admin.member-settings.index') }}" class="admin-link">Pengaturan Member</a>
+                <a href="{{ route('admin.admin-users.index') }}" class="admin-link">Admin Users</a>
+
             </nav>
         </aside>
         <div class="admin-main">

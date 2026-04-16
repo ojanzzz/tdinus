@@ -31,7 +31,7 @@
                         @auth
                             <a href="{{ route('member.pelatihan.index') }}" class="btn-submit">Ambil Pelatihan</a>
                         @else
-                            <a href="{{ route('login.show', 'member') . '?register=1' }}" class="btn-submit">Daftar Sekarang</a>
+                            <a href="{{ route('login.member') }}" class="btn-submit">Login Untuk Ambil</a>
                         @endauth
                     </div>
                     <div class="share-buttons">

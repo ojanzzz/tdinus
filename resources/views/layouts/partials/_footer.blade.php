@@ -12,8 +12,8 @@
                         @php
                             $services = $services ?? \App\Models\Service::take(4)->get();
                         @endphp
-                        @forelse($services as $service)
-                            <li><a href="/layanan-kami">{{ $service->name }}</a></li>
+@forelse($services as $service)
+                            <li><a href="/layanan-kami">{{ $service->name ?? $service }}</a></li>
                         @empty
                             <li>Publikasi Hasil Penelitian</li>
                             <li>Publikasi Hasil PKM</li>
@@ -26,8 +26,13 @@
                     <h3>Alamat Perusahaan</h3>
                     <p>PT. Teras Digital Nusantara<br>Nggaro te, lingkungan BTN permata Hijau<br>Bima, NTB</p>
                     <div class="footer-map">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.570226735!2d118.721!3d-8.466!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNMKwMjcnNTcuNiJTIDEyMCDGsMcmw0OS4zIkU!5e0!3m2!1sen!2sus!4v173!5m2!1sen!2sus" 
-                                width="100%" height="120" style="border:0; border-radius: 0.5rem;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                     
+                        <div class="map-fallback" style="display: none; background: #f5f5f5; padding: 20px; border-radius: 0.5rem; text-align: center; height: 120px; display: flex; align-items: center; justify-content: center;">
+                            <div>
+                                <p style="margin: 0; font-weight: 500;">📍 Lokasi Kantor</p>
+                                <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">Nggaro te, lingkungan BTN permata Hijau<br>Bima, NTB</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="footer-social">

@@ -5,7 +5,6 @@
         <div class="container">
             <div class="content-card" style="max-width: 480px;">
                 <h1 class="page-title" style="margin-bottom: 1.5rem;">
-                    {{ $role === 'admin' ? 'Login Admin' : ($isRegister ? 'Daftar Member' : 'Login Member') }}</h1>
 
                 @if($isRegister ?? false)
                     <form method="POST" action="{{ route('register.member') }}" class="form-stack">
@@ -58,11 +57,11 @@
                         @endif
                         <button type="submit" class="btn-submit btn-block">Daftar</button>
                         <p style="text-align: center; margin-top: 1rem;">
-                            Sudah punya akun? <a href="{{ route('login.show', 'member') }}">Login</a>
+                            Sudah punya akun? <a href="{{ route('login.member') }}">Masuk di sini</a>
                         </p>
                     </form>
                 @else
-                    <form method="POST" action="{{ route('login.perform', $role) }}" class="form-stack">
+                    <form method="POST" action="{{ $role === 'admin' ? route('login.admin') : route('login.member') }}" class="form-stack">
                         @csrf
                         <label>
                             Email
@@ -81,7 +80,7 @@
                         <button type="submit" class="btn-submit btn-block">Masuk</button>
                         @if($role === 'member')
                             <p style="text-align: center; margin-top: 1rem;">
-                                Belum punya akun? <a href="{{ route('login.show', 'member') . '?register=1' }}">Daftar</a>
+                                Belum punya akun? <a href="{{ route('login.member') }}?register=1">Daftar di sini</a>
                             </p>
                         @endif
                     </form>

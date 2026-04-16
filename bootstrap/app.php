@@ -11,8 +11,18 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [
+            \App\Http\Middleware\SecurityHeaders::class,
+            \App\Http\Middleware\InputSanitization::class,
+        ]);
+
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureRole::class,
+            'login.throttle' => \App\Http\Middleware\LoginThrottle::class,
+            'security.headers' => \App\Http\Middleware\SecurityHeaders::class,
+            'input.sanitize' => \App\Http\Middleware\InputSanitization::class,
+            'secure.upload' => \App\Http\Middleware\SecureUpload::class,
+            'honeypot' => \App\Http\Middleware\Honeypot::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

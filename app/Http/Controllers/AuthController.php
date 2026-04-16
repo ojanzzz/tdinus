@@ -11,54 +11,135 @@ use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
-    public function showLogin(string $role)
+    public function loginAdmin(Request $request)
     {
-        if (!in_array($role, ['admin', 'member'], true)) {
-            abort(404);
-        }
-
-        $isRegister = request()->query('register') === '1';
-        $services = $role === 'member' ? Service::pluck('name', 'id')->toArray() : [];
-        return view('auth.login', ['role' => $role, 'services' => $services, 'isRegister' => $isRegister]);
-    }
-
-    public function login(Request $request, string $role)
-    {
-        if (!in_array($role, ['admin', 'member'], true)) {
-            abort(404);
-        }
-
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+        $request->validate([
+            'email' => ['required', 'email:rfc,dns', 'max:255', 'string'],
+            'password' => ['required', 'string', 'min:6'],
         ]);
 
-        $credentials['role'] = $role;
+        // Rate limiting check
+        $key = 'login_attempts_' . $request->ip() . '_' . $request->input('email');
+        $attempts = cache()->get($key, 0);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-
-            return $role === 'admin'
-                ? redirect()->route('admin.dashboard')
-                : redirect()->route('member.dashboard');
+        if ($attempts >= 5) {
+            return back()->withErrors([
+                'email' => 'Too many login attempts. Please try again later.',
+            ])->onlyInput('email');
         }
 
+        $credentials = [
+            'email' => $request->input('email'),
+            'password' => $request->input('password'),
+            'role' => 'admin'
+        ];
+
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            $request->session()->regenerate();
+
+            // Clear failed attempts on success
+            cache()->forget($key);
+
+            // Log successful login
+            \Log::info('Admin login successful', [
+                'email' => $request->input('email'),
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent()
+            ]);
+
+            return redirect()->route('admin.dashboard');
+        }
+
+        // Increment failed attempts
+        cache()->put($key, $attempts + 1, now()->addMinutes(15));
+
+        // Log failed login attempt
+        \Log::warning('Admin login failed', [
+            'email' => $request->input('email'),
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'attempts' => $attempts + 1
+        ]);
+
         return back()->withErrors([
-            'email' => 'Email atau password tidak sesuai untuk role ini.',
+            'email' => 'Email atau password tidak sesuai.',
+        ])->onlyInput('email');
+    }
+
+    public function loginMember(Request $request)
+    {
+        $request->validate([
+            'email' => ['required', 'email:rfc,dns', 'max:255', 'string'],
+            'password' => ['required', 'string', 'min:6'],
+        ]);
+
+        // Rate limiting check
+        $key = 'login_attempts_' . $request->ip() . '_' . $request->input('email');
+        $attempts = cache()->get($key, 0);
+
+        if ($attempts >= 5) {
+            return back()->withErrors([
+                'email' => 'Too many login attempts. Please try again later.',
+            ])->onlyInput('email');
+        }
+
+        $credentials = [
+            'email' => $request->input('email'),
+            'password' => $request->input('password'),
+            'role' => 'member'
+        ];
+
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            $request->session()->regenerate();
+
+            // Clear failed attempts on success
+            cache()->forget($key);
+
+            // Log successful login
+            \Log::info('Member login successful', [
+                'email' => $request->input('email'),
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent()
+            ]);
+
+            return redirect()->route('member.dashboard');
+        }
+
+        // Increment failed attempts
+        cache()->put($key, $attempts + 1, now()->addMinutes(15));
+
+        // Log failed login attempt
+        \Log::warning('Member login failed', [
+            'email' => $request->input('email'),
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'attempts' => $attempts + 1
+        ]);
+
+        return back()->withErrors([
+            'email' => 'Email atau password tidak sesuai.',
         ])->onlyInput('email');
     }
 
     public function register(Request $request)
     {
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users'],
-'phone' => ['required', 'numeric', 'digits_between:9,12'],
-            'address' => ['required', 'string'],
-            'password' => ['required', 'confirmed', Password::min(6)->mixedCase()->numbers()->symbols()],
-            'selected_services' => ['required', 'array', 'min:1'],
-            'selected_services.*' => ['exists:services,id'],
+            'name' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
+            'email' => ['required', 'email:rfc,dns', 'max:255', 'unique:users,email'],
+            'phone' => ['required', 'string', 'regex:/^[0-9]+$/', 'min:9', 'max:12'],
+            'address' => ['required', 'string', 'max:500', 'min:10'],
+            'password' => ['required', 'confirmed', 'min:8', 'max:128', Password::min(8)
+                ->mixedCase()
+                ->numbers()
+                ->symbols()
+                ->uncompromised()],
+            'selected_services' => ['required', 'array', 'min:1', 'max:10'],
+            'selected_services.*' => ['integer', 'exists:services,id'],
         ]);
+
+        // Sanitize input
+        $data['name'] = strip_tags(trim($data['name']));
+        $data['address'] = strip_tags(trim($data['address']));
 
         User::create([
             'name' => $data['name'],
@@ -68,6 +149,13 @@ class AuthController extends Controller
             'password' => Hash::make($data['password']),
             'role' => 'member',
             'selected_services' => $data['selected_services'],
+        ]);
+
+        // Log successful registration
+        \Log::info('Member registration successful', [
+            'email' => $data['email'],
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent()
         ]);
 
         return back()->with('success', 'Daftar berhasil! Silakan login.');
@@ -82,4 +170,3 @@ class AuthController extends Controller
         return redirect('/');
     }
 }
-
