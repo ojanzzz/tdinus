@@ -26,5 +26,44 @@ Homestead.json
 /storage/pail
 .env.backup
 .env.production
+.env.*.local
 .phpactor.json
 auth.json
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# OS files
+.AppleDouble
+.LSOverride
+*.sublime-project
+*.sublime-workspace
+
+# SSH Keys (keep them local!)
+.ssh/
+*.pem
+*.key
+id_rsa*
+id_dsa*
+
+# Database files
+*.sqlite
+*.sqlite3
+
+# Testing & Coverage
+.phpunit.result.cache
+coverage/
+.coverage.*
+
+# Runtime files
+storage/logs/*
+storage/framework/sessions/*
+storage/framework/cache/*
+!storage/.gitkeep
+!bootstrap/cache/.gitkeep

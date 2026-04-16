@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - DB_HOST=mysql
+      - DB_USERNAME=tdinus_user
+      - DB_PASSWORD=password
+      - DB_DATABASE=tdinus_db
+    depends_on:
+      - mysql
+    command: php artisan serve --host=0.0.0.0
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tdinus_db
+      MYSQL_USER: tdinus_user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
