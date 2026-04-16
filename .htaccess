@@ -6,21 +6,52 @@
 # php -- END cPanel-generated handler, do not edit
 
 # ============================================================
-# Laravel Rewrite Rules (Added for TDINUS)
+# Laravel & TDINUS Configuration
 # ============================================================
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    
+    # HTTPS Redirect (uncomment if needed)
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-    # Skip rewriting if it's a real file or directory
+    # Handle public folder routing
+    # If the request is not for a real file or directory
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-l
 
-    # Don't rewrite the public directory itself
-    RewriteCond %{REQUEST_URI} !^/public/
+    # If requesting /public, process normally
+    RewriteCond %{REQUEST_URI} ^/public
+    RewriteRule ^public/(.*)$ public/index.php?route=$1 [L,QSA]
 
-    # Rewrite all requests to the public folder
+    # Otherwise, redirect non-public requests
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !^/public
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
+
 # ============================================================
-# END Laravel Configuration
+# Additional Security & Performance Headers
+# ============================================================
+
+<IfModule mod_headers.c>
+    # Prevent access to sensitive files
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+
+# ============================================================
+# Block access to sensitive directories
+# ============================================================
+
+<FilesMatch "^\.env|^\.git|^storage|^bootstrap">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# ============================================================
+# END TDINUS Configuration
 # ============================================================
