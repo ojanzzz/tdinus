@@ -9,14 +9,15 @@ echo "🔧 Fixing TDINUS Domain Setup di cPanel..."
 echo ""
 
 # Tentukan path (sesuaikan dengan struktur cPanel Anda)
-# Opsi 1: Jika TDINUS di root public_html
-CPANEL_ROOT="/home/tditis693/public_html"
-APP_DIR="$CPANEL_ROOT"
+CPANEL_ROOT="/home/tdit5693/public_html"
+TDINUS_DIR="$CPANEL_ROOT/tdinus.com"
+APP_DIR="$TDINUS_DIR"
 
-# Opsi 2: Jika TDINUS di subfolder (uncomment jika perlu)
-# APP_DIR="$CPANEL_ROOT/tdinus"
+# Root directory untuk domain /public_html
+ROOT_DIR="$CPANEL_ROOT"
 
-echo "📍 Application path: $APP_DIR"
+echo "📍 Root path: $ROOT_DIR"
+echo "📍 TDINUS app path: $APP_DIR"
 echo ""
 
 # ============================================================
@@ -139,7 +140,7 @@ echo "4. Set Document Root to:"
 echo "   $APP_DIR/public"
 echo ""
 echo "5. If you don't see the option, use:"
-echo "   /home/tditis693/public_html/public"
+echo "   /home/tdit5693/public_html/tdinus.com/public"
 echo ""
 echo "=================================="
 echo ""
@@ -147,18 +148,42 @@ echo ""
 # ============================================================
 # 7. CREATE .HTACCESS FOR MAIN DIRECTORY
 # ============================================================
-echo "🔒 Setting up main .htaccess..."
+echo "🔒 Setting up main .htaccess in app folder..."
 
 cat > "$APP_DIR/.htaccess" << 'EOF'
-# Redirect to public folder
+# Redirect to public folder inside tdinus.com
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteRule ^(.*)$ public/$1 [L]
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ public/$1 [L,QSA]
 </IfModule>
 EOF
 
 chmod 644 "$APP_DIR/.htaccess"
-echo "✅ Main .htaccess created"
+echo "✅ App .htaccess created"
+echo ""
+
+# ============================================================
+# 8. CREATE ROOT .HTACCESS TO ROUTE TO tdnius.com/public
+# ============================================================
+echo "🔒 Setting up root .htaccess in public_html..."
+
+cat > "$ROOT_DIR/.htaccess" << 'EOF'
+# Redirect all public_html requests to tdinus.com/public
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    RewriteCond %{REQUEST_URI} !^/tdinus.com/public/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ /tdinus.com/public/$1 [L,QSA]
+</IfModule>
+EOF
+
+chmod 644 "$ROOT_DIR/.htaccess"
+echo "✅ Root .htaccess created"
 echo ""
 
 # ============================================================
