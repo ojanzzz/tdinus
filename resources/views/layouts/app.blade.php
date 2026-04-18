@@ -8,14 +8,7 @@
     <meta name="author" content="Teras Digital Nusantara">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta property="og:title" content="Teras Digital Nusantara - Pengembangan Teknologi Informasi dan Transformasi Digital">
-    <meta property="og:description" content="Teras Digital Nusantara (Tdinus) adalah perusahaan yang bergerak di bidang pengembangan teknologi informasi dan transformasi digital. Fokus kami adalah publikasi ilmiah, jurnal, dan pelatihan.">
-    <meta property="og:image" content="/images/logo-tdinus.png">
-    <meta property="og:url" content="https://www.tdinus.com">
-    <meta name="twitter:title" content="Teras Digital Nusantara - Pengembangan Teknologi Informasi dan Transformasi Digital">
-    <meta name="twitter:description" content="Teras Digital Nusantara (Tdinus) fokus pada publikasi ilmiah, jurnal, dan pelatihan di bidang teknologi informasi dan transformasi digital.">
-    <meta name="twitter:image" content="/images/logo-tdinus.png">
-    <meta name="twitter:card" content="summary_large_image">
+    @yield('meta')
     <title>@yield('title', 'Teras Digital Nusantara – Transformasi Digital Kreatif')</title>
     
     <!-- Favicon -->
@@ -30,6 +23,7 @@
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" as="style">
 
     <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/news-sidebar.css">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

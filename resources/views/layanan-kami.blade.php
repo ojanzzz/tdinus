@@ -10,6 +10,9 @@
                     <img src="{{ $service->image_path ?? '/images/journal-1.jpg' }}" alt="{{ $service->name }}" class="card-image">
                     <h3>{{ $service->name }}</h3>
                     <p>{{ $service->description }}</p>
+                 <a href="{{ $service->url_layanan ? (preg_match('/^https?:\/\//', $service->url_layanan) ? $service->url_layanan : 'https://' . $service->url_layanan) : '/kontak-kami' }}" class="btn-submit" {{ $service->url_layanan ? 'target="_blank" rel="noopener noreferrer"' : '' }}>
+                        Hubungi
+                    </a>
                 </div>
             @empty
                 <div class="service-card">

@@ -1,19 +1,20 @@
 // Mobile menu functionality
 document.documentElement.classList.add('js');
 document.addEventListener('DOMContentLoaded', function() {
-  const toggle = document.getElementById('mobile-menu-toggle');
-  const nav = document.getElementById('mobile-nav');
+  // Public site mobile menu
+  const publicToggle = document.getElementById('mobile-menu-toggle');
+  const publicNav = document.getElementById('mobile-nav');
   const overlay = document.getElementById('mobile-overlay');
   const closeBtn = document.getElementById('mobile-nav-close');
 
-  const hasMenu = !!(toggle && nav);
+  const hasMenu = !!(publicToggle && publicNav);
 
-  if (nav) {
-    nav.setAttribute('aria-hidden', 'true');
+  if (publicNav) {
+    publicNav.setAttribute('aria-hidden', 'true');
   }
 
-  if (toggle) {
-    toggle.setAttribute('aria-expanded', 'false');
+  if (publicToggle) {
+    publicToggle.setAttribute('aria-expanded', 'false');
   }
 
   // Ensure body styles are clean on load
@@ -21,66 +22,68 @@ document.addEventListener('DOMContentLoaded', function() {
   document.body.style.position = '';
   document.body.style.width = '';
 
-  const closeMenu = () => {
+  const closePublicMenu = () => {
     if (!hasMenu) return;
-    toggle.classList.remove('active');
-    nav.classList.remove('is-open');
+    publicToggle.classList.remove('active');
+    publicNav.classList.remove('is-open');
     if (overlay) overlay.classList.remove('is-visible');
-    toggle.setAttribute('aria-expanded', 'false');
-    nav.setAttribute('aria-hidden', 'true');
+    publicToggle.setAttribute('aria-expanded', 'false');
+    publicNav.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
   };
 
-  const openMenu = () => {
+  const openPublicMenu = () => {
     if (!hasMenu) return;
-    nav.classList.add('is-open');
+    publicNav.classList.add('is-open');
     if (overlay) overlay.classList.add('is-visible');
-    toggle.classList.add('active');
-    toggle.setAttribute('aria-expanded', 'true');
-    nav.setAttribute('aria-hidden', 'false');
+    publicToggle.classList.add('active');
+    publicToggle.setAttribute('aria-expanded', 'true');
+    publicNav.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
   };
 
   if (hasMenu) {
-    toggle.addEventListener('click', function() {
-      if (nav.classList.contains('is-open')) {
-        closeMenu();
+    publicToggle.addEventListener('click', function() {
+      if (publicNav.classList.contains('is-open')) {
+        closePublicMenu();
       } else {
-        openMenu();
+        openPublicMenu();
       }
     });
 
     if (overlay) {
-      overlay.addEventListener('click', closeMenu);
+      overlay.addEventListener('click', closePublicMenu);
     }
 
     if (closeBtn) {
-      closeBtn.addEventListener('click', closeMenu);
+      closeBtn.addEventListener('click', closePublicMenu);
     }
 
     // Close on escape key
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
-        closeMenu();
+        closePublicMenu();
       }
     });
 
     // Close on link click (mobile)
-    const mobileLinks = nav.querySelectorAll('a');
+    const mobileLinks = publicNav.querySelectorAll('a');
     mobileLinks.forEach(link => {
-      link.addEventListener('click', closeMenu);
+      link.addEventListener('click', closePublicMenu);
     });
 
     // Auto hide on resize to desktop (updated breakpoint)
     const mq = window.matchMedia('(min-width: 769px)');
     const handleResize = () => {
       if (mq.matches) {
-        closeMenu();
+        closePublicMenu();
       }
     };
     window.addEventListener('resize', handleResize);
     window.addEventListener('orientationchange', handleResize);
 
     // Ensure clean state on load
-    closeMenu();
+    closePublicMenu();
   }
 
   // Swipe to close gesture
@@ -89,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
   let isSwiping = false;
 
   const handleTouchStart = (e) => {
-    if (!nav.classList.contains('is-open')) return;
+    if (!publicNav.classList.contains('is-open')) return;
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
     isSwiping = true;
@@ -101,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const diffX = currentX - startX;
     if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(e.touches[0].clientY - startY)) {
       if (diffX > 0) { // Swipe right to close
-        nav.style.transform = `translateX(${Math.min(diffX, 100)}px)`;
+        publicNav.style.transform = `translateX(${Math.min(diffX, 100)}px)`;
       }
     }
   };
@@ -111,23 +114,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const endX = e.changedTouches[0].clientX;
     const diffX = endX - startX;
     isSwiping = false;
-    nav.style.transform = '';
+    publicNav.style.transform = '';
     
     if (diffX > 100) { // Threshold for close
-      closeMenu();
+      closePublicMenu();
     }
   };
 
-  if (nav) {
-    nav.addEventListener('touchstart', handleTouchStart, { passive: true });
-    nav.addEventListener('touchmove', handleTouchMove, { passive: false });
-    nav.addEventListener('touchend', handleTouchEnd, { passive: true });
+  if (publicNav) {
+    publicNav.addEventListener('touchstart', handleTouchStart, { passive: true });
+    publicNav.addEventListener('touchmove', handleTouchMove, { passive: false });
+    publicNav.addEventListener('touchend', handleTouchEnd, { passive: true });
   }
 
   // Focus trap for accessibility
   const trapFocus = (e) => {
-    if (!nav.classList.contains('is-open')) return;
-    const focusable = nav.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (!publicNav.classList.contains('is-open')) return;
+    const focusable = publicNav.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
 
@@ -146,12 +149,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   };
 
-  if (toggle && nav) {
-    toggle.addEventListener('keydown', trapFocus);
+  if (publicToggle && publicNav) {
+    publicToggle.addEventListener('keydown', trapFocus);
     document.addEventListener('keydown', trapFocus);
   }
-
-
 
   // Smooth internal link scrolling
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -225,23 +226,3 @@ document.addEventListener('DOMContentLoaded', function() {
     startAuto();
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

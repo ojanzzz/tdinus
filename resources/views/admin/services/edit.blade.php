@@ -14,6 +14,10 @@
         Deskripsi
         <textarea name="description" rows="4" class="form-input">{{ old('description', $service->description) }}</textarea>
     </label>
+        <label>
+        Url Layanan
+        <input type="url" name="url_layanan" value="{{ old('url_layanan', $service->url_layanan) }}" class="form-input" placeholder="https://contoh.com atau /path/relatif">
+    </label>
     <label>
         Gambar
         <input type="file" name="image" class="form-input" accept="image/*">

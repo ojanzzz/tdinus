@@ -7,7 +7,7 @@
     @csrf
     <label>
         Judul
-        <input type="text" name="title" value="{{ old('title') }}" class="form-input" required>
+        <input type="text" name="title" value="{{ old('title') }}" class="form-input">
     </label>
     <label>
         Deskripsi

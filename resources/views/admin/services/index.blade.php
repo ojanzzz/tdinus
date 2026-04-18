@@ -18,6 +18,7 @@
         <thead>
             <tr>
                 <th>Nama</th>
+                <th>Url Layanan</th>
                 <th>Gambar</th>
                 <th>Status</th>
                 <th>Terakhir Update</th>
@@ -28,6 +29,13 @@
             @forelse($services as $service)
                 <tr>
                     <td>{{ $service->name }}</td>
+                    <td>
+                        @if($service->url_layanan)
+                            <a href="{{ $service->url_layanan }}" target="_blank" rel="noopener" class="url-link">{{ Str::limit($service->url_layanan, 50) }}</a>
+                        @else
+                            -
+                        @endif
+                    </td>
                     <td>
                         @if($service->image_path)
                             <img src="{{ $service->image_path }}" alt="{{ $service->name }}" class="thumb-image">

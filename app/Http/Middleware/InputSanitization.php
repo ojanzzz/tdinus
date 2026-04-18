@@ -18,8 +18,18 @@ class InputSanitization
         // Sanitize all input data
         $input = $request->all();
 
-        array_walk_recursive($input, function (&$value) {
+        array_walk_recursive($input, function (&$value, $key) use ($input) {
             if (is_string($value)) {
+                // Skip rich text fields (TinyMCE HTML)
+                $richTextFields = ['body', 'content', 'description', 'excerpt'];
+                $fieldPath = implode('.', (array) $key);
+                if (in_array('body', $richTextFields) || str_contains($fieldPath, 'body') || strlen($value) > 5000) {
+                    // Only basic cleaning for rich content
+                    $value = str_replace(["\0", "\\x00"], '', $value);
+                    $value = trim($value);
+                    return;
+                }
+
                 // Remove null bytes
                 $value = str_replace("\0", '', $value);
 

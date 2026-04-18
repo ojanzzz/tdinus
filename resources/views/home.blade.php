@@ -44,7 +44,9 @@
                     @if($service->description)
                         <p>{{ $service->description }}</p>
                     @endif
-                    <a href="/kontak-kami" class="btn-submit">Hubungi</a>
+  <a href="{{ $service->url_layanan ? (preg_match('/^https?:\/\//', $service->url_layanan) ? $service->url_layanan : 'https://' . $service->url_layanan) : '/kontak-kami' }}" class="btn-submit" {{ $service->url_layanan ? 'target="_blank" rel="noopener noreferrer"' : '' }}>
+                        Hubungi
+                    </a>
                 </div>
             @empty
                 <div class="hero-card">
@@ -100,7 +102,13 @@
                     @if($pelatihan->price)
                         <p>Rp {{ number_format($pelatihan->price,0,',','.') }}</p>
                     @endif
-                    <a href="/kontak-kami" class="btn-submit">Daftar</a>
+                         <div class="card-actions">
+                        @auth
+                            <a href="{{ route('member.pelatihan.index') }}" class="btn-submit">Ambil Pelatihan</a>
+                        @else
+                            <a href="{{ route('login.member') }}" class="btn-submit">Login Untuk Ambil</a>
+                        @endauth
+                    </div>
                 </div>
             @empty
                 <p>Belum ada pelatihan tersedia.</p>

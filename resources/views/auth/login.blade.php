@@ -4,7 +4,7 @@
     <section class="section section-muted">
         <div class="container">
             <div class="content-card" style="max-width: 480px;">
-                <h1 class="page-title" style="margin-bottom: 1.5rem;">
+                <h1 class="page-title-login" style="margin-bottom: 1.5rem;">
 
                 @if($isRegister ?? false)
                     <form method="POST" action="{{ route('register.member') }}" class="form-stack">

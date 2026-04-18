@@ -32,8 +32,10 @@
     </label>
     <label>
         Isi Berita
-        <textarea name="body" rows="6" class="form-input">{{ old('body', $news->body) }}</textarea>
+        <textarea name="body" id="news-body" rows="6" class="form-input">{{ old('body', $news->body) }}</textarea>
     </label>
+    
+    
     <label>
         Tanggal Publikasi
         <input type="date" name="published_at" value="{{ old('published_at', optional($news->published_at)->format('Y-m-d')) }}" class="form-input">
@@ -50,4 +52,19 @@
         <button type="submit" class="btn-primary">Update</button>
     </div>
 </form>
+<!-- Load TinyMCE Script with API Key -->
+
+<script src="https://cdn.tiny.cloud/1/sjhdgimwlpcym3wj2z3s0lndatqhenqfrb0a2u3ln3bj6vky/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
+
+<script>
+    // Initialize TinyMCE
+    tinymce.init({
+        selector: '#news-body',
+        height: 400,
+        plugins: 'advlist autolink lists link image charmap code',
+        toolbar: 'undo redo | formatselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | code',
+        image_advtab: true,
+        content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px; }'
+    });
+</script>
 @endsection

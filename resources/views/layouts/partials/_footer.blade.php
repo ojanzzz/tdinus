@@ -38,19 +38,19 @@
                 <div class="footer-social">
                     <h3>Follow Us</h3>
                     <div class="footer-social-list">
-                        <a href="https://facebook.com/tdinus" target="_blank" class="footer-social-link facebook" aria-label="Facebook" rel="noopener">
+                        <a href="https://www.facebook.com/profile.php?id=100075987625092" target="_blank" class="footer-social-link facebook" aria-label="Facebook" rel="noopener">
                             <svg viewBox="0 0 24 24" fill="currentColor" class="social-icon" width="22" height="22">
                                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                             </svg>
                         </a>
-                        <a href="https://instagram.com/tdinus" target="_blank" class="footer-social-link instagram" aria-label="Instagram" rel="noopener">
+                        <a href="https://instagram.com/tdinusofficial" target="_blank" class="footer-social-link instagram" aria-label="Instagram" rel="noopener">
                             <svg viewBox="0 0 24 24" fill="currentColor" class="social-icon" width="22" height="22">
                                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z"/>
                                 <circle cx="12" cy="12" r="4"/>
                                 <circle cx="18.016" cy="5.984" r="1.016"/>
                             </svg>
                         </a>
-                        <a href="https://x.com/tdinus" target="_blank" class="footer-social-link x" aria-label="X" rel="noopener">
+                        <a href="https://x.com/tdinusofficial" target="_blank" class="footer-social-link x" aria-label="X" rel="noopener">
                             <svg viewBox="0 0 24 24" fill="currentColor" class="social-icon" width="22" height="22">
                                 <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932z"/>
                             </svg>

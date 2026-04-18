@@ -107,22 +107,50 @@ class SecureUpload
      */
     protected function checkForMaliciousContent($file, Request $request): void
     {
-        $content = file_get_contents($file->getPathname());
+        $mimeType = $file->getMimeType();
+        $filename = $file->getClientOriginalName();
+        
+        // Skip deep scan for images - rely on MIME and extension validation
+        if (str_starts_with($mimeType, 'image/')) {
+            // Quick header check (first 1024 bytes) for non-PDF docs
+            $content = file_get_contents($file->getPathname(), false, null, 0, 1024);
+        } else {
+            $content = file_get_contents($file->getPathname());
+        }
 
-        // Check for PHP code
-        if (preg_match('/<\?php/i', $content) || preg_match('/<%/i', $content)) {
+        if (!$content) {
+            return;
+        }
+
+        // More precise PHP check: must be followed by code, ignore in binary contexts
+        if (preg_match('/<\?php\s*[^\s]/i', $content) || 
+            preg_match('/<%\s*[^\s]/i', $content)) {
             Log::warning('Malicious PHP code detected in upload', [
                 'ip' => $request->ip(),
-                'filename' => $file->getClientOriginalName()
+                'filename' => $filename,
+                'mime_type' => $mimeType
             ]);
             abort(400, 'Malicious content detected');
         }
 
-        // Check for script tags
-        if (preg_match('/<script/i', $content)) {
+        // Script tags only in text/html or if clearly executable
+        if (preg_match('/<script\b[^>]*>/i', $content)) {
             Log::warning('Script tag detected in upload', [
                 'ip' => $request->ip(),
-                'filename' => $file->getClientOriginalName()
+                'filename' => $filename,
+                'mime_type' => $mimeType
+            ]);
+            abort(400, 'Malicious content detected');
+        }
+
+        // Additional check for executable content in non-script files
+        if (!str_starts_with($mimeType, 'image/') && 
+            (preg_match('/(eval|exec|shell_exec|system|passthru)\s*\(/i', $content) ||
+             preg_match('/base64_decode\s*\(/i', $content))) {
+            Log::warning('Suspicious executable code detected', [
+                'ip' => $request->ip(),
+                'filename' => $filename,
+                'mime_type' => $mimeType
             ]);
             abort(400, 'Malicious content detected');
         }
@@ -139,7 +167,7 @@ class SecureUpload
             '/\\\\/',           // Backslashes
             '/^\./',            // Hidden files
             '/[<>:*?"|]/',      // Invalid characters
-            '/\.(php|exe|bat|cmd|com|scr|pif|jar|js|vb|wsf)$/i', // Executable extensions
+            '/\.(php[0-9]*|phtml|pht|exe|bat|cmd|com|scr|pif|jar|sh|pl|asp|aspx|jsp|vb|wsf|cgi)$/i', // Executable extensions (allow image ext)
         ];
 
         foreach ($suspiciousPatterns as $pattern) {

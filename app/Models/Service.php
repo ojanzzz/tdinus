@@ -9,6 +9,7 @@ class Service extends Model
     protected $fillable = [
         'name',
         'description',
+        'url_layanan',
         'image_path',
         'is_active',
     ];

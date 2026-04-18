@@ -26,20 +26,40 @@ class PublicController extends Controller
         ]);
     }
 
-    public function news()
+public function news()
     {
-        return view('berita', [
-            'newsItems' => News::where('is_active', true)->latest()->paginate(9),
-        ]);
+        $query = News::where('is_active', true)->latest();
+        
+        if (request('category')) {
+            $query->where('category', request('category'));
+        }
+        
+        $categories = News::where('is_active', true)
+            ->whereNotNull('category')
+            ->where('category', '!=', '')
+            ->distinct()
+            ->pluck('category')
+            ->sort();
+        
+        $newsItems = $query->paginate(9);
+        
+        $newsItems->appends(request()->query());
+        
+        return view('berita', compact('newsItems', 'categories'));
     }
 
     public function newsDetail(string $slug)
     {
         $news = News::where('slug', $slug)->where('is_active', true)->firstOrFail();
 
-        return view('berita-detail', [
-            'news' => $news,
-        ]);
+        $categories = News::where('is_active', true)
+            ->whereNotNull('category')
+            ->where('category', '!=', '')
+            ->distinct()
+            ->pluck('category')
+            ->sort();
+
+        return view('berita-detail', compact('news', 'categories'));
     }
 
     public function pelatihan()

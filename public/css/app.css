@@ -625,6 +625,13 @@ background: #ffffff !important;
   margin: 0 0 3rem;
   color: var(--brand-primary);
 }
+.page-title-login {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px;
+  margin: 0 0 3rem;
+  color: var(--brand-primary);
+}
+
 
 .section-subtitle {
   font-family: 'Space Grotesk', sans-serif;
@@ -1066,6 +1073,17 @@ footer{
   border: 1px solid var(--border);
 }
 
+.url-link {
+  color: var(--brand-primary);
+  font-weight: 600;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.url-link:hover {
+  text-decoration: underline;
+}
+
 /* News detail */
 .news-detail {
   display: grid;
@@ -1081,8 +1099,9 @@ footer{
 }
 
 .news-detail-image {
-  width: 100%;
-  height: 320px;
+  width: 70%;
+  height: auto;
+  place-self: center;
   object-fit: cover;
 }
 
@@ -1390,7 +1409,7 @@ footer{
   }
 
   .section {
-    padding: 3.5rem 0;
+    padding: 0.5rem 0;
   }
 
   .page-title {
