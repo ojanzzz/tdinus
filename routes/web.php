@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PublicController::class, 'home']);
 Route::view('/tentang', 'tentang');
-Route::get('/layanan-kami', [PublicController::class, 'services']);
+Route::get('/layanan-kami', [PublicController::class, 'services'])->name('services.index');
 Route::get('/berita', [PublicController::class, 'news']);
 Route::get('/berita/{slug}', [PublicController::class, 'newsDetail']);
 Route::get('/pelatihan', [PublicController::class, 'pelatihan']);

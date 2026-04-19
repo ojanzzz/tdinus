@@ -25,11 +25,12 @@ class PublicController extends Controller
                 ->add(Url::create('/pelatihan'))
                 ->add(Url::create('/kontak-kami'));
 
-        // Services
-        $sitemap->add(Service::where('is_active', true)->get()->map(function ($service) {
-            return Url::create(route('services.index')) // or custom service detail if exists
-                ->setLastModificationDate($service->updated_at ?? Carbon::now());
-        }));
+// Services (list page)
+        $sitemap->add(Url::create('/layanan-kami')->setLastModificationDate(Carbon::now()));
+        // Per service if have detail page (add if needed)
+        // $sitemap->add(Service::where('is_active', true)->get()->map(function ($service) {
+        //     return Url::create("/layanan/{$service->slug}")...
+        // }));
 
         // News
         $sitemap->add(News::where('is_active', true)->get()->map(function ($news) {
