@@ -8,6 +8,26 @@
     <meta name="author" content="Teras Digital Nusantara">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:title" content="Teras Digital Nusantara...">
+<meta property="og:image" content="http://127.0.0.1:8000/storage/gambar-berita.jpg">
+<meta property="og:description" content="Teras Digital Nusantara (Tdinus) adalah...">
+    <meta property="fb:app_id" content="123456789" /> {{-- Isi dengan ID jika ada --}}
+<meta property="og:site_name" content="Teras Digital Nusantara">
+
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:type" content="article">
+<meta property="og:url" content="{{ Request::url() }}">
+<meta property="og:title" content="@yield('meta_title', 'Teras Digital Nusantara')">
+<meta property="og:description" content="@yield('meta_description', 'Berita terkini dari Teras Digital')">
+<meta property="og:image" content="@yield('meta_image', asset('images/default-share.jpg'))">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="@yield('meta_title', 'Teras Digital Nusantara')">
+<meta name="twitter:description" content="@yield('meta_description', 'Berita terkini dari Teras Digital')">
+<meta name="twitter:image" content="@yield('meta_image', asset('images/default-share.jpg'))">
     @yield('meta')
     <title>@yield('title', 'Teras Digital Nusantara – Transformasi Digital Kreatif')</title>
     

@@ -22,6 +22,7 @@ Route::get('/layanan-kami', [PublicController::class, 'services']);
 Route::get('/berita', [PublicController::class, 'news']);
 Route::get('/berita/{slug}', [PublicController::class, 'newsDetail']);
 Route::get('/pelatihan', [PublicController::class, 'pelatihan']);
+Route::get('/sitemap.xml', [PublicController::class, 'sitemap'])->name('sitemap');
 Route::view('/kontak-kami', 'kontak-kami');
 
 Route::get('/admin_logintdinus', function () {

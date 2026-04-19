@@ -6,15 +6,56 @@ use App\Models\News;
 use App\Models\Service;
 use App\Models\Pelatihan;
 use App\Models\Slider;
+use Spatie\Sitemap\Sitemap;
+use Spatie\Sitemap\Tags\Url;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class PublicController extends Controller
 {
+    public function sitemap(Request $request)
+    {
+        $sitemap = Sitemap::create();
+
+        // Static pages
+        $sitemap->add(Url::create('/')->setLastModificationDate(Carbon::now()))
+                ->add(Url::create('/tentang'))
+                ->add(Url::create('/layanan-kami'))
+                ->add(Url::create('/berita'))
+                ->add(Url::create('/pelatihan'))
+                ->add(Url::create('/kontak-kami'));
+
+        // Services
+        $sitemap->add(Service::where('is_active', true)->get()->map(function ($service) {
+            return Url::create(route('services.index')) // or custom service detail if exists
+                ->setLastModificationDate($service->updated_at ?? Carbon::now());
+        }));
+
+        // News
+        $sitemap->add(News::where('is_active', true)->get()->map(function ($news) {
+            $url = $news->slug ? "/berita/{$news->slug}" : "/berita/{$news->id}";
+            return Url::create($url)
+                ->setLastModificationDate($news->updated_at ?? Carbon::now());
+        }));
+
+        // Pelatihan
+        $sitemap->add(Pelatihan::where('status', 'active')->get()->map(function ($pelatihan) {
+            return Url::create('/pelatihan/' . $pelatihan->id) // adjust if slug
+                ->setLastModificationDate($pelatihan->updated_at ?? Carbon::now());
+        }));
+
+        // Sliders/home featured if needed
+        // $sitemap->add(Slider::where('is_active', true)->get()->map(...));
+
+        return $sitemap->toResponse($request);
+    }
+
     public function home()
     {
         return view('home', [
             'sliders' => Slider::where('is_active', true)->orderBy('sort_order')->get(),
             'services' => Service::where('is_active', true)->latest()->take(4)->get(),
-'newsItems' => News::where('is_active', true)->latest()->take(3)->get(),
+            'newsItems' => News::where('is_active', true)->latest()->take(3)->get(),
             'pelatihans' => Pelatihan::where('status', 'active')->latest()->take(4)->get(),
         ]);
     }

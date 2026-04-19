@@ -1,5 +1,7 @@
 @extends('layouts.app')
-
+@section('meta_title', $newsItems->first()->title ?? 'Berita Terbaru')
+@section('meta_description', Str::limit(strip_tags($newsItems->first()->excerpt ?? 'Baca berita terbaru kami'), 150))
+@section('meta_image', asset('storage/' . ($newsItems->first()->image ?? 'default-image.jpg')))
 @section('content')
     <section class="section">
         <div class="container">
