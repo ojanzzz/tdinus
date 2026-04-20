@@ -15,8 +15,38 @@
     </label>
     <label>
         Kategori
-        <input type="text" name="category" value="{{ old('category') }}" class="form-input">
+        <select name="category" id="category-select" class="form-input">
+            <option value="">Pilih Kategori</option>
+            @foreach($categories as $cat)
+                <option value="{{ $cat }}" {{ old('category') == $cat ? 'selected' : '' }}>{{ $cat }}</option>
+            @endforeach
+            <option value="__new__">+ Tambah Kategori Baru</option>
+        </select>
+        <input type="text" id="new-category-input" name="new_category" value="{{ old('new_category') }}" class="form-input" style="display:none; margin-top:0.5rem;" placeholder="Masukkan kategori baru">
     </label>
+    <script>
+        document.getElementById('category-select').addEventListener('change', function() {
+            const newInput = document.getElementById('new-category-input');
+            if (this.value === '__new__') {
+                newInput.style.display = 'block';
+                newInput.required = true;
+                document.querySelector('[name=\"category\"]').removeAttribute('name');
+            } else {
+                newInput.style.display = 'none';
+                newInput.required = false;
+                newInput.value = '';
+                document.querySelector('[name=\"new_category\"]').setAttribute('name', 'new_category');
+            }
+        });
+        // On submit, if new, set category to new value
+        document.querySelector('form').addEventListener('submit', function() {
+            const select = document.getElementById('category-select');
+            const newInput = document.getElementById('new-category-input');
+            if (select.value === '__new__' && newInput.value.trim()) {
+                select.value = newInput.value.trim();
+            }
+        });
+    </script>
     <label>
         Gambar
         <input type="file" name="image" class="form-input" accept="image/*">
