@@ -43,8 +43,9 @@
     <link rel="preload" href="/images/logo-tdinus.png" as="image">
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" as="style">
 
-    <link rel="stylesheet" href="/css/app.css">
+<link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/news-sidebar.css">
+    <link rel="stylesheet" href="/css/payments-responsive.css">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

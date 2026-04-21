@@ -16,42 +16,42 @@
     <div class="form-error">{{ session('error') }}</div>
 @endif
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+<div class="payment-grid">
     <!-- CARD INVOICE -->
-    <div class="form-card">
-        <div style="margin-bottom: 2rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 1rem;">
-            <h2 style="margin: 0 0 0.5rem 0;">INVOICE PEMBAYARAN</h2>
-            <p style="margin: 0; color: #666; font-size: 0.9rem;">No. {{ $payment->invoice_no }}</p>
+    <div class="form-card payment-invoice-card">
+        <div class="invoice-header">
+            <h2 class="invoice-title">INVOICE PEMBAYARAN</h2>
+            <p class="invoice-number">No. {{ $payment->invoice_no }}</p>
         </div>
 
         <div class="form-stack">
             <label>Pelatihan</label>
-            <p style="font-size: 1.2rem; font-weight: bold; margin: 0;">{{ $payment->pelatihan->title }}</p>
+            <p class="payment-pelatihan">{{ $payment->pelatihan->title }}</p>
         </div>
 
         <div class="form-stack">
             <label>Nama Member</label>
-            <p style="margin: 0;">{{ auth()->user()->name }}</p>
+            <p>{{ auth()->user()->name }}</p>
         </div>
 
         <div class="form-stack">
             <label>Email</label>
-            <p style="margin: 0;">{{ auth()->user()->email }}</p>
+            <p>{{ auth()->user()->email }}</p>
         </div>
 
         <div class="form-stack">
             <label>Tanggal Invoice</label>
-            <p style="margin: 0;">{{ $payment->created_at->format('d M Y H:i') }}</p>
+            <p>{{ $payment->created_at->format('d M Y H:i') }}</p>
         </div>
 
-        <div class="form-stack" style="background: #f8f9fa; padding: 1rem; border-radius: 0.5rem;">
-            <label style="margin-bottom: 0.5rem;">Jumlah Pembayaran</label>
-            <p style="font-size: 1.8rem; font-weight: bold; color: #28a745; margin: 0;">Rp {{ number_format($payment->amount, 0, ',', '.') }}</p>
+        <div class="payment-amount-section">
+            <label>Jumlah Pembayaran</label>
+            <p class="payment-amount-large">Rp {{ number_format($payment->amount, 0, ',', '.') }}</p>
         </div>
 
         <div class="form-stack">
             <label>Status Pembayaran</label>
-            <span class="status-badge status-{{ strtolower($payment->status) }}" style="font-size: 1rem;">
+            <span class="status-badge status-{{ strtolower($payment->status) }} status-large">
                 @if($payment->status === 'pending')
                     ⏳ Menunggu Pembayaran
                 @elseif($payment->status === 'paid')
@@ -62,34 +62,45 @@
             </span>
         </div>
 
-        <div style="text-align: center;">
-            <button onclick="window.print()" class="btn-outline" style="width: 100%;">🖨️ Cetak Invoice</button>
+        <div class="text-center">
+            <button onclick="window.print()" class="btn-outline w-full">🖨️ Cetak Invoice</button>
         </div>
     </div>
 
     <!-- CARD INSTRUKSI PEMBAYARAN -->
-    <div class="form-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-        <div style="margin-bottom: 1.5rem;">
-            <h2 style="margin: 0 0 0.5rem 0; color: white;">Cara Pembayaran</h2>
-            <p style="margin: 0; color: rgba(255,255,255,0.8); font-size: 0.9rem;">Ikuti langkah-langkah berikut untuk melakukan pembayaran</p>
+    <div class="form-card payment-instructions-card">
+        <div class="section-header">
+            <h2>Cara Pembayaran</h2>
+            <p>Ikuti langkah-langkah berikut untuk melakukan pembayaran</p>
         </div>
 
-        <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
-            <h4 style="margin: 0 0 0.5rem 0; color: white;">📱 Transfer Bank</h4>
-            <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">Hubungi admin untuk mendapatkan nomor rekening transfer</p>
-            <p style="margin: 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">Email: <strong>admin@tdinus.com</strong></p>
+        <div class="payment-method-card">
+            <h4>📱 Transfer Bank</h4>
+            <div class="bank-details">
+                <div class="bank-row">
+                    <span>BNI</span>
+                    <strong>1472166982</strong>
+                </div>
+                <div class="bank-row">
+                    <span>BCA</span>
+                    <strong>2220558692</strong>
+                </div>
+                <span class="bank-name">a.n Sutriawan</span>
+            </div>
         </div>
 
-        <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
-            <h4 style="margin: 0 0 0.5rem 0; color: white;">💳 E-Wallet</h4>
-            <p style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">GCash, PayMaya, atau e-wallet lokal lainnya</p>
-            <p style="margin: 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">Hubungi admin untuk detail pembayaran</p>
+        <div class="payment-method-card">
+            <h4>💳 E-Wallet</h4>
+            <div class="bank-details">
+                <div class="bank-row">
+                    <span>Dana</span>
+                    <strong>085225550096</strong>
+                </div>
+            </div>
         </div>
 
-        <div style="background: rgba(255,255,255,0.15); padding: 1rem; border-radius: 0.5rem; border-left: 4px solid #ffd700;">
-            <p style="margin: 0; font-size: 0.9rem;">
-                <strong>⚠️ Penting:</strong> Setelah melakukan pembayaran, mohon unggah bukti pembayaran di bawah ini untuk verifikasi.
-            </p>
+        <div class="payment-tip-card">
+            <p><strong>⚠️ Penting:</strong> Setelah melakukan pembayaran, mohon unggah bukti pembayaran di bawah ini untuk verifikasi.</p>
         </div>
     </div>
 </div>

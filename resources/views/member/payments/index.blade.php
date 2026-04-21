@@ -17,45 +17,34 @@
 @endif
 
 @if($payments->isNotEmpty())
-    <div class="table-wrap">
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>Invoice No</th>
-                    <th>Pelatihan</th>
-                    <th>Jumlah</th>
-                    <th>Status</th>
-                    <th>Tanggal</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($payments as $payment)
-                    <tr>
-                        <td><strong>{{ $payment->invoice_no }}</strong></td>
-                        <td>{{ $payment->pelatihan->title }}</td>
-                        <td>Rp {{ number_format($payment->amount, 0, ',', '.') }}</td>
-                        <td>
-                            <span class="status-badge status-{{ strtolower($payment->status) }}">
-                                {{ $payment->status === 'pending' ? 'Menunggu Pembayaran' : ucfirst($payment->status) }}
-                            </span>
-                            @if($payment->bukti_path)
-                                <br><a href="{{ Storage::url($payment->bukti_path) }}" target="_blank" class="btn-outline small">Lihat Bukti</a>
-                            @endif
-                        </td>
-                        <td>{{ $payment->created_at->format('d M Y H:i') }}</td>
-                        <td class="table-actions">
-                            @if($payment->status === 'rejected')
-                                <a href="{{ route('member.pelatihan.index') }}" class="btn-primary">Ambil Ulang Pelatihan</a>
-                                <p class="small text-muted mt-1 mb-0">Pembayaran ditolak - bisa ambil lagi</p>
-                            @else
-                                <a href="{{ route('member.payments.show', $payment) }}" class="btn-primary">Lihat Invoice</a>
-                            @endif
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+    <div class="responsive-payments">
+        @foreach($payments as $payment)
+            <div class="payment-card form-card">
+                <div class="payment-header">
+                    <div>
+                        <strong>{{ $payment->invoice_no }}</strong>
+                        <span class="status-badge status-{{ strtolower($payment->status) }}">
+                            {{ $payment->status === 'pending' ? 'Menunggu Pembayaran' : ucfirst($payment->status) }}
+                        </span>
+                    </div>
+                    <div class="payment-date">{{ $payment->created_at->format('d M Y') }}</div>
+                </div>
+                <h3 class="payment-title">{{ $payment->pelatihan->title }}</h3>
+                <div class="payment-amount">Rp {{ number_format($payment->amount, 0, ',', '.') }}</div>
+                @if($payment->bukti_path)
+                    <a href="{{ Storage::url($payment->bukti_path) }}" target="_blank" class="btn-outline small mt-2">Lihat Bukti</a>
+                @endif
+                <div class="payment-actions">
+                    @if($payment->status === 'rejected')
+                        <a href="{{ route('member.pelatihan.index') }}" class="btn-primary w-full">Ambil Ulang Pelatihan</a>
+                    @else
+                        <a href="{{ route('member.payments.show', $payment) }}" class="btn-primary w-full">Lihat Invoice</a>
+                    @endif
+                </div>
+            </div>
+        @endforeach
+    </div>
+    <div class="pagination-wrap mt-4">
         {{ $payments->links() }}
     </div>
 @else

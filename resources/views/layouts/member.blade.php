@@ -9,6 +9,7 @@
                 <a href="{{ route('member.dashboard') }}" class="admin-link {{ request()->routeIs('member.dashboard') ? 'active' : '' }}">Dashboard</a>
                 <a href="/member/profile" class="admin-link {{ request()->routeIs('member.profile.*') ? 'active' : '' }}">Profile</a>
                 <a href="/member/pelatihan" class="admin-link {{ request()->routeIs('member.pelatihan.*') ? 'active' : '' }}">Pelatihan</a>
+                <a href="/member/payments" class="admin-link {{ request()->routeIs('member.payments.*') ? 'active' : '' }}">Pembayaran</a>
                 <a href="/member/sertifikat" class="admin-link {{ request()->routeIs('member.sertifikat.*') ? 'active' : '' }}">Sertifikat</a>
             </nav>
         </aside>
