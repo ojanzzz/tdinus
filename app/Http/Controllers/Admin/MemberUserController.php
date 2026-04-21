@@ -115,14 +115,26 @@ class MemberUserController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users,email,' . $member->id],
-            'password' => ['nullable', 'confirmed', 'string', 'min:4'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'phone' => ['nullable', 'string', 'max:20'],
             'address' => ['nullable', 'string'],
             'selected_services' => ['nullable', 'array'],
             'selected_services.*' => ['exists:services,id'],
         ]);
 
-        $member->update($data);
+        $updateData = [
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'phone' => $data['phone'],
+            'address' => $data['address'],
+            'selected_services' => $data['selected_services'],
+        ];
+
+        if (!empty($data['password'])) {
+            $updateData['password'] = Hash::make($data['password']);
+        }
+
+        $member->update($updateData);
 
         return redirect()->route('admin.members.index')
             ->with('success', 'Member berhasil diperbarui.');

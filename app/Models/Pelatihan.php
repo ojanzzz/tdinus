@@ -24,4 +24,9 @@ class Pelatihan extends Model
     {
         return $this->hasMany(Sertifikat::class);
     }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
 }

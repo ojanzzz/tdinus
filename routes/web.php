@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\MemberUserController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SliderController;
+use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\Member\DashboardController as MemberDashboardController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\Admin\PelatihanController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Admin\SertifikatController;
 use App\Http\Controllers\Member\PelatihanController as MemberPelatihanController;
 use App\Http\Controllers\Member\SertifikatController as MemberSertifikatController;
 use App\Http\Controllers\Member\ProfileController;
+use App\Http\Controllers\Member\PaymentController as MemberPaymentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PublicController::class, 'home']);
@@ -21,7 +23,8 @@ Route::view('/tentang', 'tentang');
 Route::get('/layanan-kami', [PublicController::class, 'services'])->name('services.index');
 Route::get('/berita', [PublicController::class, 'news']);
 Route::get('/berita/{slug}', [PublicController::class, 'newsDetail']);
-Route::get('/pelatihan', [PublicController::class, 'pelatihan']);
+Route::get('/pelatihan', [PublicController::class, 'pelatihan'])->name('pelatihan.index');
+Route::get('/pelatihan/{slug}', [PublicController::class, 'pelatihanDetail'])->name('pelatihan.detail');
 Route::get('/sitemap.xml', [PublicController::class, 'sitemap'])->name('sitemap');
 Route::view('/kontak-kami', 'kontak-kami');
 
@@ -52,13 +55,16 @@ Route::middleware(['auth', 'role:admin', 'security.headers', 'input.sanitize', '
     Route::patch('members/sertifikat/{sertifikat}/confirm', [MemberUserController::class, 'confirmSertifikat'])->name('admin.members.sertifikat.confirm');
     Route::patch('members/sertifikat/{sertifikat}/reject', [MemberUserController::class, 'rejectSertifikat'])->name('admin.members.sertifikat.reject');
     Route::patch('members/sertifikat/{sertifikat}/update-status', [MemberUserController::class, 'updateSertifikatStatus'])->name('admin.members.sertifikat.update-status');
+    Route::resource('payments', AdminPaymentController::class)->only(['index']);
+    Route::patch('payments/{payment}/status', [AdminPaymentController::class, 'updateStatus'])->name('payments.update-status');
 });
 
-Route::middleware(['auth', 'role:member', 'security.headers', 'input.sanitize'])->prefix('member')->name('member.')->group(function () {
+Route::middleware(['auth', 'role:member', 'security.headers', 'input.sanitize', 'secure.upload'])->prefix('member')->name('member.')->group(function () {
     Route::get('/', [MemberDashboardController::class, 'index'])->name('dashboard');
     Route::resource('pelatihan', MemberPelatihanController::class)->only(['index']);
     Route::post('pelatihan/{pelatihan}/take', [MemberPelatihanController::class, 'take'])->name('pelatihan.take');
     Route::resource('sertifikat', MemberSertifikatController::class)->only(['index']);
     Route::resource('profile', ProfileController::class)->only(['index', 'update']);
+    Route::resource('payments', MemberPaymentController::class)->only(['index', 'show']);
+    Route::post('payments/{payment}/upload-bukti', [MemberPaymentController::class, 'uploadBukti'])->name('payments.upload-bukti');
 });
-

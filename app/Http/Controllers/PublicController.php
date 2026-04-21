@@ -110,4 +110,25 @@ public function news()
             'pelatihans' => Pelatihan::where('status', 'active')->latest()->paginate(9),
         ]);
     }
+
+    public function pelatihanDetail($slug)
+    {
+        $pelatihan = Pelatihan::where('slug', $slug)
+            ->orWhere('id', $slug)
+            ->where('status', 'active')
+            ->firstOrFail();
+
+        $pelatihans = Pelatihan::where('status', 'active')->latest()->paginate(9);
+
+        if (auth()->check()) {
+            $user = auth()->user();
+            $hasSertifikat = $user->sertifikats()->where('pelatihan_id', $pelatihan->id)->exists();
+            $hasPayment = $user->payments()->where('pelatihan_id', $pelatihan->id)->exists();
+            $pelatihan->is_taken = $hasSertifikat || $hasPayment;
+        } else {
+            $pelatihan->is_taken = false;
+        }
+
+        return view('pelatihan.detail', compact('pelatihan', 'pelatihans'));
+    }
 }

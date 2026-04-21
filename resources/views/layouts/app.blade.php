@@ -82,6 +82,7 @@
     @include('layouts.partials._whatsapp-float')
     @include('layouts.partials._footer')
 
+<script src="https://cdn.tinymce.com/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="/js/app.js"></script>
     @stack('scripts')
 </body>

@@ -903,6 +903,13 @@ footer{
   border-radius: var(--radius-sm);
 }
 
+.form-hint {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
 .checkbox-row {
   display: flex;
   align-items: center;
@@ -919,7 +926,8 @@ footer{
 }
 
 .admin-shell {
-  display: grid;
+  display: -webkit-inline-box;
+  display: inline-box;
   grid-template-columns: 240px 1fr;
   gap: 2rem;
   align-items: start;
@@ -1006,7 +1014,7 @@ footer{
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.95rem;
+  font-size: 14px;
 }
 
 .admin-table th,

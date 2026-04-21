@@ -20,7 +20,6 @@
                 <div class="hero-card">
                     <img src="{{ $pelatihan->image_path ?? '/images/journal-1.jpg' }}" alt="{{ $pelatihan->title }}">
                     <h3>{{ $pelatihan->title }}</h3>
-                    <p>{{ Str::limit($pelatihan->description, 100) }}</p>
                     @if($pelatihan->duration)
                         <p><strong>Durasi:</strong> {{ $pelatihan->duration }}</p>
                     @endif
@@ -28,12 +27,9 @@
                         <p><strong>Harga:</strong> Rp {{ number_format($pelatihan->price,0,',','.') }}</p>
                     @endif
                     <div class="card-actions">
-                        @auth
-                            <a href="{{ route('member.pelatihan.index') }}" class="btn-submit">Ambil Pelatihan</a>
-                        @else
-                            <a href="{{ route('login.member') }}" class="btn-submit">Login Untuk Ambil</a>
-                        @endauth
-                    </div>
+                        <div class="card-actions">
+                            <a href="{{ route('pelatihan.detail', $pelatihan->slug ?? $pelatihan->id) }}" class="btn-primary">Lihat Selengkapnya</a>
+                        </div>
                     <div class="share-buttons">
                     <a href="javascript:void(0)" class="share-btn facebook" data-platform="facebook"
                         data-title="{{ $pelatihan->title }}" data-url="{{ request()->url() }}"
@@ -74,7 +70,9 @@
             @endforelse
         </div>
         
-        {{ $pelatihans->links() }}
+        <div class="pagination-section">
+            {{ $pelatihans->appends(request()->query())->links() }}
+        </div>
     </div>
 </section>
 @endsection

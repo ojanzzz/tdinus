@@ -102,9 +102,13 @@
                     @if($pelatihan->price)
                         <p>Rp {{ number_format($pelatihan->price,0,',','.') }}</p>
                     @endif
-                         <div class="card-actions">
+                    <div class="card-actions">
+                        <a href="{{ route('pelatihan.detail', $pelatihan->slug ?? $pelatihan->id) }}" class="btn-primary">Lihat Detail</a>
                         @auth
-                            <a href="{{ route('member.pelatihan.index') }}" class="btn-submit">Ambil Pelatihan</a>
+                            <form method="POST" action="{{ route('member.pelatihan.take', $pelatihan) }}" style="display: inline;">
+                                @csrf
+                                <button type="submit" class="btn-submit">Ambil Pelatihan</button>
+                            </form>
                         @else
                             <a href="{{ route('login.member') }}" class="btn-submit">Login Untuk Ambil</a>
                         @endauth

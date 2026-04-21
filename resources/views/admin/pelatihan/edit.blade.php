@@ -16,8 +16,9 @@
     </label>
     <label>
         Deskripsi
-        <textarea name="description" rows="4" class="form-input">{{ old('description', $pelatihan->description) }}</textarea>
+        <textarea name="description" rows="6" id="description-edit">{{ old('description', $pelatihan->description) }}</textarea>
     </label>
+
     <label>
         Gambar (kosongkan untuk tetap)
         @if($pelatihan->image_path)
@@ -45,5 +46,18 @@
         <button type="submit" class="btn-primary">Update</button>
     </div>
 </form>
+<script src="https://cdn.tiny.cloud/1/sjhdgimwlpcym3wj2z3s0lndatqhenqfrb0a2u3ln3bj6vky/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
+
+<script>
+    // Initialize TinyMCE
+    tinymce.init({
+        selector: '#description-edit',
+        height: 400,
+        plugins: 'advlist autolink lists link image charmap code',
+        toolbar: 'undo redo | formatselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | code',
+        image_advtab: true,
+        content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px; }'
+    });
+</script>
 @endsection
 

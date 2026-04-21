@@ -6,6 +6,10 @@
         <h1 class="page-title">Pelatihan</h1>
         <p class="page-subtitle">Pilih pelatihan aktif. Setelah ambil, admin akan melihat progress dan menerbitkan sertifikat.</p>
     </div>
+    <div style="display: flex; gap: 1rem;">
+        <a href="{{ route('member.payments.index') }}" class="btn-primary">Pembayaran</a>
+        <a href="{{ route('member.dashboard') }}" class="btn-outline">← Dashboard</a>
+    </div>
 </div>
 
 @if(session('success'))
@@ -27,7 +31,7 @@
                     <h3>{{ $p->title }}</h3>
                     <p>{{ Str::limit($p->description, 100) }}</p>
                     @if($p->duration || $p->price)
-                        <p><strong>{{ $p->duration }}</strong> | Rp {{ number_format($p->price ?? 0, 0, ',', '.') }}</p>
+                        <p><strong>{{ $p->duration }}</strong> | @if($p->price > 0) Rp {{ number_format($p->price ?? 0, 0, ',', '.') }} @else Gratis @endif</p>
                     @endif
                     <form method="POST" action="{{ route('member.pelatihan.take', $p) }}">
                         @csrf
@@ -52,7 +56,8 @@
                     <tr>
                         <th>Pelatihan</th>
                         <th>Tanggal Ambil</th>
-                        <th>Status</th>
+                        <th>Pembayaran</th>
+                        <th>Status Sertifikat</th>
                         <th>Sertifikat</th>
                     </tr>
                 </thead>
@@ -61,6 +66,7 @@
                         <tr>
                             <td>{{ $item->pelatihan->title ?? '-' }}</td>
                             <td>{{ $item->issue_date?->format('d M Y') ?? '-' }}</td>
+                            <td>-</td>
                             <td>
                                 <span class="status-badge status-{{ strtolower($item->status) }}">
                                     @if($item->status === 'pending')
