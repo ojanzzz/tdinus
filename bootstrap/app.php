@@ -1,0 +1,30 @@
+<?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [
+            \App\Http\Middleware\SecurityHeaders::class,
+            \App\Http\Middleware\InputSanitization::class,
+        ]);
+
+        $middleware->alias([
+            'role' => \App\Http\Middleware\EnsureRole::class,
+            'login.throttle' => \App\Http\Middleware\LoginThrottle::class,
+            'security.headers' => \App\Http\Middleware\SecurityHeaders::class,
+            'input.sanitize' => \App\Http\Middleware\InputSanitization::class,
+            'secure.upload' => \App\Http\Middleware\SecureUpload::class,
+            'honeypot' => \App\Http\Middleware\Honeypot::class,
+        ]);
+    })
+    ->withExceptions(function (Exceptions $exceptions): void {
+        //
+    })->create();

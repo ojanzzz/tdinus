@@ -1,0 +1,69 @@
+/vendor/
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Laravel 4 specific
+bootstrap/compiled.php
+app/storage/
+
+# Laravel 5 & Lumen specific
+public/storage
+public/hot
+
+# Laravel 5 & Lumen specific with changed public path
+public_html/storage
+public_html/hot
+
+storage/*.key
+.env
+Homestead.yaml
+Homestead.json
+/.vagrant
+.phpunit.result.cache
+
+/public/build
+/storage/pail
+.env.backup
+.env.production
+.env.*.local
+.phpactor.json
+auth.json
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# OS files
+.AppleDouble
+.LSOverride
+*.sublime-project
+*.sublime-workspace
+
+# SSH Keys (keep them local!)
+.ssh/
+*.pem
+*.key
+id_rsa*
+id_dsa*
+
+# Database files
+*.sqlite
+*.sqlite3
+
+# Testing & Coverage
+.phpunit.result.cache
+coverage/
+.coverage.*
+
+# Runtime files
+storage/logs/*
+storage/framework/sessions/*
+storage/framework/cache/*
+!storage/.gitkeep
+!bootstrap/cache/.gitkeep

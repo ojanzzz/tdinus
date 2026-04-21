@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# === Post-Receive Hook untuk Git Auto-Deploy ===
+# Letakkan di: /home/username/repositories/tdinus.git/hooks/post-receive
+# Chmod: chmod +x post-receive
+
+APP_DIR="/home/username/public_html"
+BRANCH="main"
+
+while read oldrev newrev ref
+do
+    if [[ $ref = refs/heads/$BRANCH ]]; then
+        echo "Deploying branch: $BRANCH"
+        
+        cd $APP_DIR
+        git fetch origin
+        git reset --hard origin/$BRANCH
+        
+        # Run deployment script
+        if [ -f "deploy.sh" ]; then
+            bash deploy.sh
+        fi
+        
+        echo "✅ Deployment complete!"
+    fi
+done
