@@ -1,0 +1,71 @@
+/* Admin Mobile Responsiveness - Simple & Clean */
+.admin-shell {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 2rem;
+  min-height: 100vh;
+}
+
+@media (max-width: 960px) {
+  .admin-shell {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .sidebar-toggle {
+    display: block !important;
+    background: var(--brand-primary);
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    width: 100%;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .admin-sidebar {
+    order: 1;
+    display: block !important;
+    position: relative;
+    border-radius: 20px;
+  }
+
+  .admin-sidebar.sidebar-hidden {
+    display: none !important;
+  }
+
+  .admin-main {
+    order: 2;
+    padding: 1rem;
+  }
+
+  .section.section-muted {
+    padding: 0.5rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-toggle {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .admin-main {
+    padding: 1rem;
+  }
+
+  .admin-link {
+    padding: 1.1rem;
+    font-size: 16px;
+  }
+}
+
+/* Ensure sidebar visible initially on mobile */
+.admin-sidebar {
+  display: block !important;
+}

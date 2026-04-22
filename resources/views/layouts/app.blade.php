@@ -46,6 +46,7 @@
 <link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/news-sidebar.css">
     <link rel="stylesheet" href="/css/payments-responsive.css">
+    <link rel="stylesheet" href="/css/admin-responsive.css">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

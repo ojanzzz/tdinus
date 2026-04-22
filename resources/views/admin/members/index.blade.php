@@ -3,26 +3,29 @@
 @section('admin-content')
     <div class="admin-header">
         <div>
-            <h1 class="page-title">Member</h1>
+            <h1 class="page-title">👥 Member</h1>
             <p class="page-subtitle">Kelola akun member dan pelatihan.</p>
         </div>
-        <div class="admin-header-actions">
-            <button id="show-members" class="btn-primary">Member</button>
-            <button id="show-pelatihan" class="btn-outline">Pelatihan Member</button>
-            <button id="show-riwayat" class="btn-outline">Riwayat Pelatihan Member</button>
-            <a href="{{ route('admin.members.create') }}" class="btn-primary">Tambah Member</a>
-        </div>
+        <a href="{{ route('admin.members.create') }}" class="btn-primary">+ Tambah Member</a>
     </div>
 
     @if(session('success'))
-        <div class="alert-success">{{ session('success') }}</div>
+        <div class="alert-success">✓ {{ session('success') }}</div>
     @endif
 
+    <!-- Tab Navigation -->
+    <div class="member-card" style="display: flex; gap: 1rem; padding: 1rem; border-bottom: 2px solid var(--border-color); border-radius: 0;">
+        <button id="show-members" class="btn-primary" style="border-radius: 0.5rem 0.5rem 0 0; flex: 1;">📋 Data Member</button>
+        <button id="show-pelatihan" class="btn-outline" style="border-radius: 0.5rem 0.5rem 0 0; flex: 1;">📚 Pelatihan Aktif</button>
+        <button id="show-riwayat" class="btn-outline" style="border-radius: 0.5rem 0.5rem 0 0; flex: 1;">✓ Riwayat Selesai</button>
+    </div>
+
+    <!-- Members Section -->
     <div id="members-section">
         <div class="member-card">
             <h2 class="page-title-small">Daftar Member</h2>
-            <form method="GET" action="{{ route('admin.members.index') }}" class="form-stack">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama atau email..." class="form-input">
+            <form method="GET" action="{{ route('admin.members.index') }}" style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="🔍 Cari nama atau email..." class="form-input" style="flex: 1; min-width: 250px;">
                 <button type="submit" class="btn-primary">Cari</button>
             </form>
         </div>
@@ -33,34 +36,46 @@
                         <th>Nama</th>
                         <th>Email</th>
                         <th>Phone</th>
-                        <th>Alamat</th>
                         <th>Layanan</th>
-                        <th>Terakhir Update</th>
+                        <th>Update</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($members as $member)
                         <tr>
-                            <td>{{ $member->name }}</td>
-                            <td>{{ $member->email }}</td>
-                            <td>{{ $member->phone ?? '-' }}</td>
-                            <td>{{ Str::limit($member->address ?? '-', 30) }}</td>
-                            <td>{{ $member->selected_services ? implode(', ', $member->selected_services) : '-' }}</td>
-                            <td>{{ $member->updated_at->format('d M Y') }}</td>
+                            <td><strong>{{ $member->name }}</strong></td>
+                            <td><small>{{ $member->email }}</small></td>
+                            <td><small>{{ $member->phone ?? '-' }}</small></td>
+                            <td>
+                                <small>
+                                    @if($member->selected_services)
+                                        @foreach(array_slice($member->selected_services, 0, 2) as $service)
+                                            <span style="background: var(--light-color); padding: 0.25rem 0.5rem; border-radius: 0.3rem; margin-right: 0.25rem;">{{ $service }}</span>
+                                        @endforeach
+                                        @if(count($member->selected_services) > 2)
+                                            <span style="background: var(--light-color); padding: 0.25rem 0.5rem; border-radius: 0.3rem;">+{{ count($member->selected_services) - 2 }}</span>
+                                        @endif
+                                    @else
+                                        -
+                                    @endif
+                                </small>
+                            </td>
+                            <td><small>{{ $member->updated_at->format('d M Y') }}</small></td>
                             <td class="table-actions">
-                                <a href="{{ route('admin.members.edit', $member) }}" class="btn-outline">Edit</a>
+                                <a href="{{ route('admin.members.edit', $member) }}" class="btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Edit</a>
                                 <form method="POST" action="{{ route('admin.members.destroy', $member) }}">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn-danger"
-                                        onclick="return confirm('Hapus member ini?')">Hapus</button>
+                                    <button type="submit" class="btn-danger" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="return confirm('Yakin hapus member ini?')">Hapus</button>
                                 </form>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7">Belum ada member.</td>
+                            <td colspan="6" style="text-align: center; padding: 2rem; color: #999;">
+                                📋 Belum ada member. <a href="{{ route('admin.members.create') }}" style="color: var(--primary-color);">Tambah member pertama</a>
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -68,10 +83,11 @@
         </div>
     </div>
 
+    <!-- Pelatihan Section -->
     <div id="pelatihan-section" style="display: none;">
         <div class="member-card">
-            <h2 class="page-title-small">Pelatihan Member</h2>
-            <p>Status semua pelatihan member yang sudah konfirmasi dan menunggu konfirmasi.</p>
+            <h2 class="page-title-small">Pelatihan Member Aktif</h2>
+            <p style="color: #666; margin: 0;">Status semua pelatihan member yang sedang berlangsung.</p>
         </div>
         <div class="table-wrap">
             <table class="admin-table">
@@ -79,7 +95,7 @@
                     <tr>
                         <th>Member</th>
                         <th>Pelatihan</th>
-                        <th>Status & Update</th>
+                        <th>Status</th>
                         <th>Tanggal Ambil</th>
                         <th>Aksi</th>
                     </tr>
@@ -87,52 +103,39 @@
                 <tbody>
                     @forelse($sertifikats as $sert)
                         <tr>
-                            <td>{{ $sert->user->name }}</td>
-                            <td>{{ $sert->pelatihan->title }}</td>
+                            <td><strong>{{ $sert->user->name }}</strong></td>
+                            <td>{{ Str::limit($sert->pelatihan->title, 35) }}</td>
                             <td>
                                 <span class="status-badge status-{{ strtolower($sert->status) }}">
                                     @if($sert->status === 'pending')
-                                        Menunggu Konfirmasi
+                                        ⏳ Menunggu
                                     @elseif($sert->status === 'in_progress')
-                                        Terkonfirmasi
+                                        ▶️ Berlangsung
                                     @endif
                                 </span>
-                                <br>
-                                <form method="POST" action="/admin/members/sertifikat/{{ $sert->id }}/update-status" style="display: inline-block; margin-top: 5px;">
-                                    @csrf
-                                    @method('PATCH')
-                                    <select name="status" class="form-input" style="width: auto; display: inline-block; font-size: 12px;">
-                                        <option value="pending" {{ $sert->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="in_progress" {{ $sert->status === 'in_progress' ? 'selected' : '' }}>Terkonfirmasi</option>
-                                    </select>
-                                    <button type="submit" class="btn-outline" style="margin-left: 5px; font-size: 12px;">Update</button>
-                                </form>
                             </td>
-                            <td>{{ $sert->issue_date->format('d M Y') }}</td>
+                            <td><small>{{ $sert->created_at->format('d M Y') }}</small></td>
                             <td class="table-actions">
                                 @if($sert->status === 'pending')
                                     <form method="POST" action="/admin/members/sertifikat/{{ $sert->id }}/confirm" style="display: inline;">
                                         @csrf
                                         @method('PATCH')
-                                        <button type="submit" class="btn-primary" onclick="return confirm('Konfirmasi pelatihan ini?')">Konfirmasi</button>
-                                    </form>
-                                    <form method="POST" action="/admin/members/sertifikat/{{ $sert->id }}/reject" style="display: inline;">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" class="btn-danger" onclick="return confirm('Tolak pelatihan ini?')">Tolak</button>
+                                        <button type="submit" class="btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="return confirm('Konfirmasi pelatihan ini?')">Konfirmasi</button>
                                     </form>
                                 @elseif($sert->status === 'in_progress')
                                     <form method="POST" action="/admin/sertifikat/{{ $sert->id }}/complete" style="display: inline;">
                                         @csrf
                                         @method('PATCH')
-                                        <button type="submit" class="btn-primary" onclick="return confirm('Selesaikan pelatihan ini dan issue sertifikat?')">Selesaikan</button>
+                                        <button type="submit" class="btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="return confirm('Selesaikan dan terbitkan sertifikat?')">Selesaikan</button>
                                     </form>
                                 @endif
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5">Tidak ada pelatihan yang perlu dikelola.</td>
+                            <td colspan="5" style="text-align: center; padding: 2rem; color: #999;">
+                                ✓ Tidak ada pelatihan yang perlu dikelola
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -140,10 +143,11 @@
         </div>
     </div>
 
+    <!-- Riwayat Section -->
     <div id="riwayat-section" style="display: none;">
         <div class="member-card">
-            <h2 class="page-title-small">Riwayat Pelatihan Member</h2>
-            <p>Riwayat pelatihan member yang sudah menerima sertifikat.</p>
+            <h2 class="page-title-small">Riwayat Pelatihan Selesai</h2>
+            <p style="color: #666; margin: 0;">Pelatihan member yang sudah menerima sertifikat.</p>
         </div>
         <div class="table-wrap">
             <table class="admin-table">
@@ -159,29 +163,31 @@
                 <tbody>
                     @forelse($completedSertifikats as $sert)
                         <tr>
-                            <td>{{ $sert->user->name }}</td>
-                            <td>{{ $sert->pelatihan->title }}</td>
+                            <td><strong>{{ $sert->user->name }}</strong></td>
+                            <td>{{ Str::limit($sert->pelatihan->title, 35) }}</td>
                             <td>
                                 <span class="status-badge status-completed">
-                                    @if($sert->status === 'completed')
+                                    ✓ @if($sert->status === 'completed')
                                         Selesai
                                     @elseif($sert->status === 'issued')
-                                        Sertifikat Diterbitkan
+                                        Sertifikat
                                     @endif
                                 </span>
                             </td>
-                            <td>{{ $sert->updated_at->format('d M Y') }}</td>
+                            <td><small>{{ $sert->updated_at->format('d M Y') }}</small></td>
                             <td>
                                 @if($sert->file_path)
-                                    <a href="{{ $sert->file_path }}" target="_blank" class="btn-primary">Download</a>
+                                    <a href="{{ $sert->file_path }}" target="_blank" class="btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;">📥 Download</a>
                                 @else
-                                    -
+                                    <span style="color: #999;">-</span>
                                 @endif
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5">Belum ada riwayat pelatihan yang selesai.</td>
+                            <td colspan="5" style="text-align: center; padding: 2rem; color: #999;">
+                                📋 Belum ada riwayat pelatihan yang selesai
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -195,24 +201,35 @@
         document.getElementById('pelatihan-section').style.display = 'none';
         document.getElementById('riwayat-section').style.display = 'none';
         this.className = 'btn-primary';
+        this.style.borderRadius = '0.5rem 0.5rem 0 0';
         document.getElementById('show-pelatihan').className = 'btn-outline';
+        document.getElementById('show-pelatihan').style.borderRadius = '0.5rem 0.5rem 0 0';
         document.getElementById('show-riwayat').className = 'btn-outline';
+        document.getElementById('show-riwayat').style.borderRadius = '0.5rem 0.5rem 0 0';
     });
+
     document.getElementById('show-pelatihan').addEventListener('click', function() {
         document.getElementById('members-section').style.display = 'none';
         document.getElementById('pelatihan-section').style.display = 'block';
         document.getElementById('riwayat-section').style.display = 'none';
         this.className = 'btn-primary';
+        this.style.borderRadius = '0.5rem 0.5rem 0 0';
         document.getElementById('show-members').className = 'btn-outline';
+        document.getElementById('show-members').style.borderRadius = '0.5rem 0.5rem 0 0';
         document.getElementById('show-riwayat').className = 'btn-outline';
+        document.getElementById('show-riwayat').style.borderRadius = '0.5rem 0.5rem 0 0';
     });
+
     document.getElementById('show-riwayat').addEventListener('click', function() {
         document.getElementById('members-section').style.display = 'none';
         document.getElementById('pelatihan-section').style.display = 'none';
         document.getElementById('riwayat-section').style.display = 'block';
         this.className = 'btn-primary';
+        this.style.borderRadius = '0.5rem 0.5rem 0 0';
         document.getElementById('show-members').className = 'btn-outline';
+        document.getElementById('show-members').style.borderRadius = '0.5rem 0.5rem 0 0';
         document.getElementById('show-pelatihan').className = 'btn-outline';
+        document.getElementById('show-pelatihan').style.borderRadius = '0.5rem 0.5rem 0 0';
     });
     </script>
 @endsection
