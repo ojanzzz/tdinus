@@ -11,6 +11,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->redirectGuestsTo(fn () => route('login.member'));
+
         $middleware->web(append: [
             \App\Http\Middleware\SecurityHeaders::class,
             \App\Http\Middleware\InputSanitization::class,

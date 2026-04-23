@@ -18,14 +18,14 @@ class PaymentController extends Controller
 
     public function show(Payment $payment)
     {
-        if ($payment->user_id !== auth()->id()) {
+        if (!$this->belongsToAuthenticatedMember($payment)) {
             $ownedPayment = auth()->user()
                 ->payments()
                 ->where('pelatihan_id', $payment->pelatihan_id)
                 ->latest()
                 ->first();
 
-            if ($ownedPayment) {
+            if ($ownedPayment && (int) $ownedPayment->id !== (int) $payment->id) {
                 return redirect()
                     ->route('member.payments.show', $ownedPayment)
                     ->with('success', 'Invoice disesuaikan ke pembayaran milik akun Anda.');
@@ -55,7 +55,7 @@ class PaymentController extends Controller
 
     public function uploadBukti(Request $request, Payment $payment)
     {
-        if ($payment->user_id !== auth()->id()) {
+        if (!$this->belongsToAuthenticatedMember($payment)) {
             return redirect()
                 ->route('member.payments.index')
                 ->with('error', 'Invoice pembayaran tidak ditemukan untuk akun Anda.');
@@ -85,5 +85,10 @@ class PaymentController extends Controller
         ]);
 
         return back()->with('success', 'Bukti pembayaran berhasil diunggah. Menunggu konfirmasi admin.');
+    }
+
+    private function belongsToAuthenticatedMember(Payment $payment): bool
+    {
+        return (int) $payment->user_id === (int) auth()->id();
     }
 }

@@ -32,6 +32,9 @@ Route::get('/admin_logintdinus', function () {
     $services = \App\Models\Service::pluck('name', 'id');
     return view('auth.login', ['role' => 'admin', 'services' => $services]);
 })->name('login.admin');
+Route::get('/login', function () {
+    return redirect()->route('login.member');
+})->name('login');
 Route::get('/login/member', function () {
     $isRegister = request()->query('register') === '1';
     $services = \App\Models\Service::pluck('name', 'id');
