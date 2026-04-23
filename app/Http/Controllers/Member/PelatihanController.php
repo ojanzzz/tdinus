@@ -18,7 +18,7 @@ class PelatihanController extends Controller
         $user = Auth::user();
         $available = Pelatihan::where('status', true)->latest()->get();
         $completed = $user->payments()
-            ->with(['pelatihan', 'sertifikat'])
+            ->with('pelatihan')
             ->latest()
             ->get();
 
@@ -69,4 +69,3 @@ class PelatihanController extends Controller
         }
     }
 }
-

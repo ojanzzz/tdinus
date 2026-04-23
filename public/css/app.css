@@ -926,11 +926,29 @@ footer{
 }
 
 .admin-shell {
-  display: -webkit-inline-box;
-  display: inline-box;
-  grid-template-columns: 240px 1fr;
+  display: flex;
+  flex-direction: row;
   gap: 2rem;
-  align-items: start;
+}
+
+@media (min-width: 961px) {
+  .admin-shell {
+    flex-direction: row;
+  }
+  
+  .sidebar-toggle.sticky-toggle {
+    display: none !important;
+  }
+  
+  .admin-sidebar {
+    flex: 0 0 240px;
+    order: 1;
+  }
+  
+  .admin-main {
+    flex: 1;
+    order: 2;
+  }
 }
 
 .admin-sidebar {
@@ -940,7 +958,6 @@ footer{
   border: 1px solid var(--border);
   box-shadow: var(--shadow-soft);
   position: sticky;
-  top: 120px;
 }
 
 .admin-title {

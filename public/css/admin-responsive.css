@@ -3,7 +3,7 @@
   display: grid;
   grid-template-columns: 240px 1fr;
   gap: 2rem;
-  min-height: 100vh;
+  min-height: fit-content;
 }
 
 @media (max-width: 960px) {
@@ -11,6 +11,30 @@
     grid-template-columns: 1fr;
     gap: 0;
   }
+
+.sidebar-toggle.sticky-toggle {
+    display: none;
+  }
+
+@media (max-width: 960px) {
+  .sidebar-toggle.sticky-toggle {
+    display: block !important;
+    background: var(--brand-primary);
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    width: 100%;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow-soft);
+    position: sticky;
+    top: 1rem;
+    z-index: 10;
+  }
+}
 
   .sidebar-toggle {
     display: block !important;
