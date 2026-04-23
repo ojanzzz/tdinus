@@ -34,7 +34,6 @@ class PelatihanController extends Controller
             'image' => ['nullable', 'image', 'max:2048'],
             'duration' => ['nullable', 'string', 'max:100'],
             'price' => ['nullable', 'numeric'],
-            'status' => ['nullable', 'boolean'],
         ]);
 
         $data['slug'] = $this->uniqueSlug($data['slug'] ?? $data['title']);
@@ -46,7 +45,7 @@ class PelatihanController extends Controller
             $data['image_path'] = '/uploads/' . $filename;
         }
 
-        $data['status'] = $request->boolean('status', true);
+        $data['status'] = $request->boolean('status', true) ? 'active' : 'inactive';
 
         Pelatihan::create($data);
 
@@ -73,7 +72,6 @@ class PelatihanController extends Controller
             'image' => ['nullable', 'image', 'max:2048'],
             'duration' => ['nullable', 'string', 'max:100'],
             'price' => ['nullable', 'numeric'],
-            'status' => ['nullable', 'boolean'],
         ]);
 
         $desiredSlug = $data['slug'] ?? $data['title'];
@@ -91,7 +89,7 @@ class PelatihanController extends Controller
             $data['image_path'] = '/uploads/' . $filename;
         }
 
-        $data['status'] = $request->boolean('status', true);
+        $data['status'] = $request->boolean('status', true) ? 'active' : 'inactive';
 
         $pelatihan->update($data);
 

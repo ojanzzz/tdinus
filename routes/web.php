@@ -63,6 +63,7 @@ Route::middleware(['auth', 'role:member', 'security.headers', 'input.sanitize', 
     Route::get('/', [MemberDashboardController::class, 'index'])->name('dashboard');
     Route::resource('pelatihan', MemberPelatihanController::class)->only(['index']);
     Route::get('pelatihan/{pelatihan}/konfirmasi', [MemberPelatihanController::class, 'konfirmasi'])->name('pelatihan.konfirmasi');
+    Route::get('pelatihan/{pelatihan}/take', [MemberPelatihanController::class, 'konfirmasi'])->name('pelatihan.take.redirect');
     Route::post('pelatihan/{pelatihan}/take', [MemberPelatihanController::class, 'take'])->name('pelatihan.take');
     Route::resource('sertifikat', MemberSertifikatController::class)->only(['index']);
     Route::resource('profile', ProfileController::class)->only(['index', 'update']);

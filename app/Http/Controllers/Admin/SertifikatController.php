@@ -39,6 +39,16 @@ class SertifikatController extends Controller
             'status' => ['nullable', 'in:pending,in_progress,issued,expired,revoked'],
         ]);
 
+        $sertifikat = Sertifikat::where('user_id', $data['user_id'])
+            ->where('pelatihan_id', $data['pelatihan_id'])
+            ->first();
+
+        if (($data['status'] ?? 'issued') === 'issued' && !$request->hasFile('file') && !$sertifikat?->file_path) {
+            return back()
+                ->withErrors(['file' => 'File sertifikat PDF wajib diunggah sebelum status dibuat issued.'])
+                ->withInput();
+        }
+
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
@@ -46,7 +56,15 @@ class SertifikatController extends Controller
             $data['file_path'] = '/uploads/sertifikat/' . $filename;
         }
 
-        Sertifikat::create($data);
+        if ($sertifikat) {
+            if (isset($data['file_path']) && $sertifikat->file_path !== $data['file_path']) {
+                $this->deleteFileIfExists($sertifikat->file_path);
+            }
+
+            $sertifikat->update($data);
+        } else {
+            Sertifikat::create($data);
+        }
 
         return redirect()->route('admin.sertifikat.index')
             ->with('success', 'Sertifikat berhasil diterbitkan.');
@@ -76,6 +94,12 @@ class SertifikatController extends Controller
             'status' => ['nullable', 'in:pending,in_progress,issued,expired,revoked'],
         ]);
 
+        if (($data['status'] ?? $sertifikat->status) === 'issued' && !$request->hasFile('file') && !$sertifikat->file_path) {
+            return back()
+                ->withErrors(['file' => 'File sertifikat PDF wajib diunggah sebelum status dibuat issued.'])
+                ->withInput();
+        }
+
         if ($request->hasFile('file')) {
             $this->deleteFileIfExists($sertifikat->file_path);
             $file = $request->file('file');
@@ -97,6 +121,10 @@ class SertifikatController extends Controller
         }
 
         $newStatus = $sertifikat->status === 'pending' ? 'in_progress' : 'issued';
+
+        if ($newStatus === 'issued' && !$sertifikat->file_path) {
+            return back()->with('error', 'Upload file sertifikat PDF terlebih dahulu sebelum menyelesaikan pelatihan.');
+        }
 
         $sertifikat->update([
             'status' => $newStatus,

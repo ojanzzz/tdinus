@@ -25,10 +25,23 @@
                     </div>
                     <div class="card-actions">
                         @auth
-                            <form method="POST" action="{{ route('member.pelatihan.take', $pelatihan) }}" style="display: inline;">
-                                @csrf
-                                <button type="submit" class="btn-submit">Ambil Pelatihan Ini</button>
-                            </form>
+                            @if($pelatihan->is_taken)
+                                <div class="alert-success" style="margin-bottom: 1rem;">
+                                    Anda sudah pernah mengambil pelatihan ini.
+                                </div>
+                                @if($memberPayment)
+                                    <a href="{{ route('member.payments.show', $memberPayment) }}" class="btn-submit">Ke Menu Pembayaran</a>
+                                @else
+                                    <a href="{{ route('member.pelatihan.index') }}" class="btn-submit">Lihat Pelatihan Aktif</a>
+                                @endif
+                            @else
+                                <form method="POST" action="{{ route('member.pelatihan.take', $pelatihan) }}" style="display: inline;">
+                                    @csrf
+                                    <button type="submit" class="btn-submit">
+                                        {{ optional($memberPayment)->status === 'rejected' ? 'Ambil Ulang Pelatihan' : 'Ambil Pelatihan Ini' }}
+                                    </button>
+                                </form>
+                            @endif
                         @else
                             <a href="{{ route('login.member') }}" class="btn-submit">Login Untuk Ambil Pelatihan</a>
                         @endauth

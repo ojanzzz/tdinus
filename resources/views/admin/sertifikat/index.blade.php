@@ -12,6 +12,9 @@
 @if(session('success'))
     <div class="alert-success">✓ {{ session('success') }}</div>
 @endif
+@if(session('error'))
+    <div class="alert-danger">⚠️ {{ session('error') }}</div>
+@endif
 
 <div class="table-wrap">
     <table class="admin-table">
@@ -72,4 +75,3 @@
     </table>
 </div>
 @endsection
-

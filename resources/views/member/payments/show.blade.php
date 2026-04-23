@@ -53,9 +53,9 @@
             <label>Status Pembayaran</label>
             <span class="status-badge status-{{ strtolower($payment->status) }} status-large">
                 @if($payment->status === 'pending')
-                    ⏳ Menunggu Pembayaran
+                    ⏳ Menunggu Pembayaran / Review
                 @elseif($payment->status === 'paid')
-                    ✓ Sudah Dibayar
+                    ✓ Diterima / Aktif
                 @else
                     ✗ Ditolak
                 @endif
@@ -154,7 +154,7 @@
             <div style="font-size: 2rem;">✓</div>
             <div>
                 <h3 style="margin: 0; color: #155724;">Pembayaran Berhasil</h3>
-                <p style="margin: 0.5rem 0 0 0; color: #155724;">Bukti pembayaran telah diverifikasi. Silakan tunggu pemberitahuan lebih lanjut.</p>
+                <p style="margin: 0.5rem 0 0 0; color: #155724;">Pembayaran telah diterima admin. Pelatihan sudah masuk ke menu Pelatihan Aktif.</p>
             </div>
         </div>
         @if($payment->bukti_path)
@@ -175,9 +175,12 @@
             </div>
         </div>
         <div style="margin-top: 1.5rem;">
-            <a href="{{ route('member.pelatihan.index') }}" class="btn-primary" style="width: 100%;">
-                🔄 Ambil Ulang Pelatihan
-            </a>
+            <form method="POST" action="{{ route('member.pelatihan.take', $payment->pelatihan) }}">
+                @csrf
+                <button type="submit" class="btn-primary" style="width: 100%;">
+                    🔄 Ambil Ulang Pelatihan
+                </button>
+            </form>
         </div>
     </div>
 @endif

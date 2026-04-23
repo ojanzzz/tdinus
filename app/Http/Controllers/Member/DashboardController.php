@@ -10,9 +10,17 @@ class DashboardController extends Controller
     public function index()
     {
         $user = auth()->user();
+
         return view('member.dashboard', [
-            'sertifikatCount' => $user->sertifikats()->count(),
-            'completedPelatihan' => $user->sertifikats()->with('pelatihan')->latest()->take(5)->get(),
+            'sertifikatCount' => $user->sertifikats()->where('status', 'issued')->count(),
+            'activePelatihanCount' => $user->sertifikats()->where('status', 'in_progress')->count(),
+            'pendingSertifikatCount' => $user->payments()->where('status', 'pending')->count(),
+            'recentSertifikats' => $user->sertifikats()
+                ->with('pelatihan')
+                ->where('status', 'issued')
+                ->latest('issue_date')
+                ->take(3)
+                ->get(),
         ]);
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\Sertifikat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
@@ -22,41 +23,54 @@ class PaymentController extends Controller
     {
         $request->validate([
             'status' => 'required|in:paid,rejected',
-            'notes' => 'nullable|string|max:500'
+            'notes' => 'nullable|string|max:500',
         ]);
+
+        if ($payment->status !== 'pending') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Status pembayaran ini sudah diproses sebelumnya.',
+            ], 422);
+        }
 
         $status = $request->status;
-        $notes = $request->notes ?: ($status === 'paid' ? 'Dikonfirmasi admin' : 'Dibatalkan admin');
+        $notes = $request->filled('notes')
+            ? $request->notes
+            : ($status === 'paid' ? 'Pembayaran diterima admin.' : 'Pembayaran ditolak admin.');
 
-        $payment->update([
-            'status' => $status,
-            'notes' => $notes
-        ]);
+        DB::transaction(function () use ($payment, $status, $notes) {
+            $payment->update([
+                'status' => $status,
+                'notes' => $notes,
+                'approved_at' => $status === 'paid' ? now() : null,
+            ]);
 
-        if ($status === 'paid') {
-            // Create sertifikat in_progress if not exists
-            if (!$payment->user->sertifikats()->where('pelatihan_id', $payment->pelatihan_id)->exists()) {
-                Sertifikat::create([
-                    'user_id' => $payment->user_id,
-                    'pelatihan_id' => $payment->pelatihan_id,
-                    'status' => 'in_progress',
-                    'issue_date' => now(),
-                    'notes' => 'Auto-created after payment confirmation: ' . $notes
-                ]);
+            if ($status === 'paid') {
+                Sertifikat::updateOrCreate(
+                    [
+                        'user_id' => $payment->user_id,
+                        'pelatihan_id' => $payment->pelatihan_id,
+                    ],
+                    [
+                        'status' => 'in_progress',
+                        'issue_date' => now()->toDateString(),
+                    ]
+                );
+
+                return;
             }
-        } elseif ($status === 'rejected') {
-            // Delete related sertifikat if exists
+
             Sertifikat::where('user_id', $payment->user_id)
                 ->where('pelatihan_id', $payment->pelatihan_id)
+                ->whereIn('status', ['pending', 'in_progress'])
                 ->delete();
-        }
+        });
 
         return response()->json([
             'success' => true,
             'message' => 'Status berhasil diupdate ke ' . $status,
             'new_status' => $status,
-            'notes' => $notes
+            'notes' => $notes,
         ]);
     }
 }
-

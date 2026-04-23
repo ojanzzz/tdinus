@@ -6,66 +6,139 @@ use App\Http\Controllers\Controller;
 use App\Models\Pelatihan;
 use App\Models\Payment;
 use App\Models\Sertifikat;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class PelatihanController extends Controller
 {
     public function index()
     {
         $user = Auth::user();
-        $available = Pelatihan::where('status', true)->latest()->get();
-        $completed = $user->payments()
+        $available = Pelatihan::where('status', 'active')->latest()->get();
+        $payments = $user->payments()
             ->with('pelatihan')
             ->latest()
             ->get();
 
-        return view('member.pelatihan.index', compact('available', 'completed'));
+        $latestPayments = $payments->unique('pelatihan_id')->keyBy('pelatihan_id');
+        $activePelatihans = $user->sertifikats()
+            ->with('pelatihan')
+            ->where('status', 'in_progress')
+            ->latest()
+            ->get();
+        $activePelatihanIds = $activePelatihans->pluck('pelatihan_id')->all();
+        $issuedPelatihanIds = $user->sertifikats()
+            ->where('status', 'issued')
+            ->pluck('pelatihan_id')
+            ->all();
+
+        return view('member.pelatihan.index', compact(
+            'available',
+            'payments',
+            'latestPayments',
+            'activePelatihans',
+            'activePelatihanIds',
+            'issuedPelatihanIds'
+        ));
     }
 
     public function konfirmasi(Pelatihan $pelatihan)
     {
         $user = Auth::user();
+        $existingPayment = $this->existingOpenPayment($user->id, $pelatihan->id);
 
-        // Check if already has payment for this pelatihan
-        if ($user->payments()->where('pelatihan_id', $pelatihan->id)->exists()) {
-            return redirect('/member/pelatihan')->with('error', 'Anda sudah memulai pembayaran untuk pelatihan ini.');
+        if ($existingPayment) {
+            return redirect()
+                ->route('member.payments.show', $existingPayment)
+                ->with('error', 'Anda sudah pernah mengambil pelatihan ini. Silakan lanjutkan ke menu pembayaran.');
+        }
+
+        if ($this->hasActiveOrCompletedTraining($user->id, $pelatihan->id)) {
+            return redirect()
+                ->route('member.pelatihan.index')
+                ->with('error', 'Anda sudah pernah mengambil pelatihan ini.');
         }
 
         return view('member.pelatihan.konfirmasi', compact('pelatihan'));
     }
 
-    public function take(Request $request, Pelatihan $pelatihan)
+    public function take(Pelatihan $pelatihan)
     {
-        $request->validate([
-            'phone' => 'required|string|min:10',
-            'address' => 'required|string',
-            'selected_services' => 'required|array',
-        ]);
-
         $user = Auth::user();
-        DB::beginTransaction();
+        $existingPayment = $this->existingOpenPayment($user->id, $pelatihan->id);
+
+        if ($existingPayment) {
+            return redirect()
+                ->route('member.payments.show', $existingPayment)
+                ->with('error', 'Anda sudah pernah mengambil pelatihan ini. Silakan lanjutkan ke menu pembayaran.');
+        }
+
+        if ($this->hasActiveOrCompletedTraining($user->id, $pelatihan->id)) {
+            return redirect()
+                ->route('member.pelatihan.index')
+                ->with('error', 'Anda sudah pernah mengambil pelatihan ini.');
+        }
 
         try {
-            $payment = Payment::create([
-                'user_id' => $user->id,
-                'pelatihan_id' => $pelatihan->id,
-                'amount' => $pelatihan->price,
-                'status' => 'pending',
-                'phone' => $request->phone,
-                'address' => $request->address,
-                'selected_services' => json_encode($request->selected_services),
-            ]);
+            $payment = DB::transaction(function () use ($user, $pelatihan) {
+                $isFreeTraining = (float) $pelatihan->price <= 0;
+                $payment = Payment::create([
+                    'user_id' => $user->id,
+                    'pelatihan_id' => $pelatihan->id,
+                    'amount' => $pelatihan->price ?? 0,
+                    'status' => $isFreeTraining ? 'paid' : 'pending',
+                    'notes' => $isFreeTraining
+                        ? 'Pelatihan gratis. Akses langsung aktif.'
+                        : 'Pendaftaran berhasil dibuat. Silakan unggah bukti pembayaran.',
+                    'approved_at' => $isFreeTraining ? now() : null,
+                ]);
 
-            DB::commit();
+                if ($isFreeTraining) {
+                    Sertifikat::updateOrCreate(
+                        [
+                            'user_id' => $user->id,
+                            'pelatihan_id' => $pelatihan->id,
+                        ],
+                        [
+                            'status' => 'in_progress',
+                            'issue_date' => now()->toDateString(),
+                        ]
+                    );
+                }
 
-            return redirect()->route('member.payments.show', $payment)
-                ->with('success', 'Pendaftaran pelatihan berhasil! Silakan lakukan pembayaran.');
-        } catch (\Exception $e) {
-            DB::rollBack();
+                return $payment;
+            });
+
+            if ($payment->isPaid()) {
+                return redirect()
+                    ->route('member.pelatihan.index')
+                    ->with('success', 'Pelatihan gratis berhasil diambil dan sudah masuk ke Pelatihan Aktif.');
+            }
+
+            return redirect()
+                ->route('member.payments.show', $payment)
+                ->with('success', 'Pendaftaran pelatihan berhasil. Silakan lanjutkan ke menu pembayaran.');
+        } catch (\Throwable $e) {
+            report($e);
+
             return back()->with('error', 'Gagal mendaftar pelatihan. Silakan coba lagi.');
         }
+    }
+
+    private function existingOpenPayment(int $userId, int $pelatihanId): ?Payment
+    {
+        return Payment::where('user_id', $userId)
+            ->where('pelatihan_id', $pelatihanId)
+            ->whereIn('status', ['pending', 'paid'])
+            ->latest()
+            ->first();
+    }
+
+    private function hasActiveOrCompletedTraining(int $userId, int $pelatihanId): bool
+    {
+        return Sertifikat::where('user_id', $userId)
+            ->where('pelatihan_id', $pelatihanId)
+            ->whereIn('status', ['in_progress', 'issued'])
+            ->exists();
     }
 }

@@ -28,9 +28,9 @@
                     <div style="text-align: right;">
                         <span class="status-badge status-{{ strtolower($payment->status) }}" style="font-size: 0.9rem;">
                             @if($payment->status === 'pending')
-                                ⏳ Menunggu Pembayaran
+                                ⏳ Menunggu Pembayaran / Review
                             @elseif($payment->status === 'paid')
-                                ✓ Terbayar
+                                ✓ Diterima / Aktif
                             @elseif($payment->status === 'rejected')
                                 ❌ Ditolak
                             @else
@@ -70,9 +70,12 @@
 
                 <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                     @if($payment->status === 'rejected')
-                        <a href="{{ route('member.pelatihan.index') }}" class="btn-primary" style="flex: 1; min-width: 200px; text-align: center; padding: 0.75rem;">
-                            Ambil Ulang Pelatihan
-                        </a>
+                        <form method="POST" action="{{ route('member.pelatihan.take', $payment->pelatihan) }}" style="flex: 1; min-width: 200px;">
+                            @csrf
+                            <button type="submit" class="btn-primary" style="width: 100%; text-align: center; padding: 0.75rem;">
+                                Ambil Ulang Pelatihan
+                            </button>
+                        </form>
                     @else
                         <a href="{{ route('member.payments.show', $payment) }}" class="btn-primary" style="flex: 1; min-width: 200px; text-align: center; padding: 0.75rem;">
                             Lihat Detail Invoice
@@ -80,7 +83,7 @@
                     @endif
                     @if($payment->status === 'pending')
                         <a href="{{ route('member.payments.show', $payment) }}" class="btn-outline" style="flex: 1; min-width: 200px; text-align: center; padding: 0.75rem;">
-                            Upload Bukti
+                            Upload / Ganti Bukti
                         </a>
                     @endif
                 </div>
@@ -103,4 +106,3 @@
     </div>
 @endif
 @endsection
-

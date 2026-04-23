@@ -113,22 +113,29 @@ public function news()
 
     public function pelatihanDetail($slug)
     {
-        $pelatihan = Pelatihan::where('slug', $slug)
-            ->orWhere('id', $slug)
-            ->where('status', 'active')
+        $pelatihan = Pelatihan::where('status', 'active')
+            ->where(function ($query) use ($slug) {
+                $query->where('slug', $slug)
+                    ->orWhere('id', $slug);
+            })
             ->firstOrFail();
 
         $pelatihans = Pelatihan::where('status', 'active')->latest()->paginate(9);
+        $memberPayment = null;
 
         if (auth()->check()) {
             $user = auth()->user();
             $hasSertifikat = $user->sertifikats()->where('pelatihan_id', $pelatihan->id)->exists();
-            $hasPayment = $user->payments()->where('pelatihan_id', $pelatihan->id)->where('status', '!=', 'rejected')->exists();
+            $memberPayment = $user->payments()
+                ->where('pelatihan_id', $pelatihan->id)
+                ->latest()
+                ->first();
+            $hasPayment = $memberPayment && $memberPayment->status !== 'rejected';
             $pelatihan->is_taken = $hasSertifikat || $hasPayment;
         } else {
             $pelatihan->is_taken = false;
         }
 
-        return view('pelatihan.detail', compact('pelatihan', 'pelatihans'));
+        return view('pelatihan.detail', compact('pelatihan', 'pelatihans', 'memberPayment'));
     }
 }

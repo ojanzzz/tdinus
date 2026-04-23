@@ -4,12 +4,15 @@
 <div class="admin-header">
     <div>
         <h1 class="page-title">Pembayaran Pelatihan</h1>
-        <p class="page-subtitle">Kelola pembayaran - klik tombol untuk konfirmasi PAID atau batalkan.</p>
+        <p class="page-subtitle">Review bukti pembayaran member, lalu terima untuk mengaktifkan pelatihan atau tolak agar member bisa mengajukan ulang.</p>
     </div>
 </div>
 
 @if(session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>
+@endif
+@if(session('error'))
+    <div class="alert-danger">{{ session('error') }}</div>
 @endif
 
 <div class="table-wrap">
@@ -42,7 +45,15 @@
                     </td>
                     <td id="status-{{ $payment->id }}">
                         <span class="status-badge status-{{ strtolower($payment->status) }}">
-                            {{ ucfirst($payment->status) }}
+                            @if($payment->status === 'pending')
+                                Menunggu Review
+                            @elseif($payment->status === 'paid')
+                                Diterima / Aktif
+                            @elseif($payment->status === 'rejected')
+                                Ditolak
+                            @else
+                                {{ ucfirst($payment->status) }}
+                            @endif
                         </span>
                         @if($payment->notes)
                             <br><small>{{ Str::limit($payment->notes, 50) }}</small>
@@ -52,13 +63,15 @@
                     <td>
                         @if($payment->status === 'pending')
                             <button onclick="confirmPayment({{ $payment->id }}, '{{ $payment->invoice_no }}')" class="btn btn-sm btn-success">
-                                ✅ Konfirmasi Paid
+                                ✅ Terima Pembayaran
                             </button>
                             <button onclick="rejectPayment({{ $payment->id }}, '{{ $payment->invoice_no }}')" class="btn btn-sm btn-danger ms-1">
-                                ❌ Batalkan
+                                ❌ Tolak
                             </button>
                         @else
-                            <span class="badge bg-success">Selesai</span>
+                            <span class="badge {{ $payment->status === 'paid' ? 'bg-success' : 'bg-danger' }}">
+                                {{ $payment->status === 'paid' ? 'Aktif' : 'Ditolak' }}
+                            </span>
                         @endif
                     </td>
                 </tr>
@@ -74,7 +87,7 @@
 
 <script>
 function confirmPayment(id, invoice) {
-    if (!confirm(`Konfirmasi pembayaran invoice ${invoice} menjadi PAID?`)) return;
+    if (!confirm(`Terima pembayaran invoice ${invoice} dan aktifkan pelatihan?`)) return;
     
     fetch(`/admin/payments/${id}/status`, {
         method: 'PATCH',
@@ -82,16 +95,16 @@ function confirmPayment(id, invoice) {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         },
-        body: JSON.stringify({ status: 'paid', notes: 'Dikonfirmasi via tombol' })
+        body: JSON.stringify({ status: 'paid', notes: 'Pembayaran diterima admin.' })
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
             const row = document.getElementById('row-' + id);
             const statusCell = document.getElementById('status-' + id);
-            statusCell.innerHTML = '<span class="status-badge status-paid">PAID</span>';
-            row.cells[7].innerHTML = '<span class="badge bg-success">✓ Selesai</span>';
-            alert('Status diubah ke PAID! Sertifikat dibuat untuk member.');
+            statusCell.innerHTML = '<span class="status-badge status-paid">DITERIMA / AKTIF</span>';
+            row.cells[7].innerHTML = '<span class="badge bg-success">✓ Aktif</span>';
+            alert('Pembayaran diterima. Pelatihan member sudah aktif.');
         } else {
             alert('Error: ' + data.message);
         }
@@ -103,8 +116,8 @@ function confirmPayment(id, invoice) {
 }
 
 function rejectPayment(id, invoice) {
-    const notes = prompt(`Alasan batalkan invoice ${invoice}? (opsional)`);
-    if (!confirm(`Batalkan pembayaran ${invoice}?`)) return;
+    const notes = prompt(`Alasan penolakan invoice ${invoice}? (opsional)`);
+    if (!confirm(`Tolak pembayaran ${invoice}? Member dapat mengajukan ulang.`)) return;
     
     fetch(`/admin/payments/${id}/status`, {
         method: 'PATCH',
@@ -112,16 +125,16 @@ function rejectPayment(id, invoice) {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         },
-        body: JSON.stringify({ status: 'rejected', notes: notes || 'Dibatalkan admin' })
+        body: JSON.stringify({ status: 'rejected', notes: notes || 'Pembayaran ditolak admin.' })
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
             const row = document.getElementById('row-' + id);
             const statusCell = document.getElementById('status-' + id);
-            statusCell.innerHTML = '<span class="status-badge status-rejected">REJECTED</span>';
-            row.cells[7].innerHTML = '<span class="badge bg-danger">Dibatalkan</span>';
-            alert('Status dibatalkan!');
+            statusCell.innerHTML = '<span class="status-badge status-rejected">DITOLAK</span>';
+            row.cells[7].innerHTML = '<span class="badge bg-danger">Ditolak</span>';
+            alert('Pembayaran ditolak. Member dapat mengambil ulang pelatihan.');
         } else {
             alert('Error: ' + data.message);
         }
@@ -141,4 +154,3 @@ function rejectPayment(id, invoice) {
 .btn-sm { font-size: .8rem; padding: .25rem .5rem; }
 </style>
 @endsection
-

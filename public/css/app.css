@@ -1125,7 +1125,7 @@ footer{
 
 .news-detail-image {
   width: 70%;
-  height: auto;
+  height: fit-content;
   place-self: center;
   object-fit: cover;
 }
@@ -1447,6 +1447,7 @@ footer{
   .service-card,
   .member-card,
   .form-card {
+    display: grid;
     padding: 1.5rem;
   }
 

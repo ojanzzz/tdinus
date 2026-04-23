@@ -12,7 +12,14 @@ class SertifikatController extends Controller
      */
     public function index()
     {
-        $sertifikats = auth()->user()->sertifikats()->with('pelatihan')->latest()->get();
+        $sertifikats = auth()->user()
+            ->sertifikats()
+            ->with('pelatihan')
+            ->where('status', 'issued')
+            ->whereNotNull('file_path')
+            ->latest('issue_date')
+            ->get();
+
         return view('member.sertifikat.index', compact('sertifikats'));
     }
 

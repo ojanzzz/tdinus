@@ -38,15 +38,22 @@ class PaymentController extends Controller
         }
 
         $request->validate([
-            'bukti_path' => 'required|image|mimes:jpeg,png,jpg,pdf|max:2048',
+            'bukti_path' => 'required|file|mimes:jpeg,jpg,png,pdf|max:2048',
+            'notes' => 'nullable|string|max:500',
         ]);
+
+        if ($payment->bukti_path && Storage::disk('public')->exists($payment->bukti_path)) {
+            Storage::disk('public')->delete($payment->bukti_path);
+        }
 
         $file = $request->file('bukti_path');
         $path = $file->store('payments/bukti', 'public');
 
         $payment->update([
             'bukti_path' => $path,
-            'notes' => $request->notes ?? 'Bukti pembayaran diunggah.',
+            'notes' => $request->filled('notes')
+                ? $request->notes
+                : 'Bukti pembayaran diunggah. Menunggu review admin.',
         ]);
 
         return back()->with('success', 'Bukti pembayaran berhasil diunggah. Menunggu konfirmasi admin.');
