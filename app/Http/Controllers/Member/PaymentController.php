@@ -19,6 +19,26 @@ class PaymentController extends Controller
     public function show(Payment $payment)
     {
         if ($payment->user_id !== auth()->id()) {
+            $ownedPayment = auth()->user()
+                ->payments()
+                ->where('pelatihan_id', $payment->pelatihan_id)
+                ->latest()
+                ->first();
+
+            if ($ownedPayment) {
+                return redirect()
+                    ->route('member.payments.show', $ownedPayment)
+                    ->with('success', 'Invoice disesuaikan ke pembayaran milik akun Anda.');
+            }
+
+            logger()->warning('Member tried to open another member payment invoice.', [
+                'auth_user_id' => auth()->id(),
+                'auth_email' => auth()->user()?->email,
+                'requested_payment_id' => $payment->id,
+                'requested_payment_user_id' => $payment->user_id,
+                'requested_pelatihan_id' => $payment->pelatihan_id,
+            ]);
+
             return redirect()
                 ->route('member.payments.index')
                 ->with('error', 'Invoice pembayaran tidak ditemukan untuk akun Anda. Silakan pilih invoice dari daftar pembayaran.');
