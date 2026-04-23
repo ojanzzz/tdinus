@@ -11,17 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        if (!Schema::hasTable('payments') || Schema::hasColumn('payments', 'bukti_path')) {
+            return;
+        }
+
+        Schema::table('payments', function (Blueprint $table) {
+            $table->string('bukti_path', 255)->nullable()->after('notes');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('payments');
+        if (!Schema::hasTable('payments') || !Schema::hasColumn('payments', 'bukti_path')) {
+            return;
+        }
+
+        Schema::table('payments', function (Blueprint $table) {
+            $table->dropColumn('bukti_path');
+        });
     }
 };

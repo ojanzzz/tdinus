@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@admin.com'],
             [
                 'name' => 'Administrator',
-                'password' => 'admin',
+                'password' => 'admin12345',
                 'role' => 'admin',
             ]
         );
@@ -28,7 +28,15 @@ class DatabaseSeeder extends Seeder
             ['email' => 'member@tdinus.com'],
             [
                 'name' => 'Member',
-                'password' => 'member',
+                'password' => 'member12345',
+                'role' => 'member',
+            ]
+        );
+          User::updateOrCreate(
+            ['email' => 'member@member.com'],
+            [
+                'name' => 'Member',
+                'password' => 'member12345',
                 'role' => 'member',
             ]
         );

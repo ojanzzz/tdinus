@@ -12,11 +12,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('pelatihan_id')->constrained('pelatihans')->onDelete('cascade');
-            $table->decimal('amount', 10, 2);
-            $table->string('invoice_no')->unique();
-            $table->enum('status', ['pending', 'paid', 'rejected'])->default('pending');
+            $table->decimal('amount', 10, 2)->nullable();
+            $table->string('status')->default('pending');
+            $table->string('bukti_path', 255)->nullable();
             $table->text('notes')->nullable();
-            $table->string('bukti_path')->nullable();
+            $table->timestamp('approved_at')->nullable();
             $table->timestamps();
         });
     }
@@ -26,4 +26,3 @@ return new class extends Migration
         Schema::dropIfExists('payments');
     }
 };
-
