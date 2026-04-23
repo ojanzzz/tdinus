@@ -16,9 +16,13 @@ class PelatihanController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $pelatihans = Pelatihan::where('status', true)->latest()->get();
+        $available = Pelatihan::where('status', true)->latest()->get();
+        $completed = $user->payments()
+            ->with(['pelatihan', 'sertifikat'])
+            ->latest()
+            ->get();
 
-        return view('member.pelatihan.index', compact('pelatihans'));
+        return view('member.pelatihan.index', compact('available', 'completed'));
     }
 
     public function konfirmasi(Pelatihan $pelatihan)
