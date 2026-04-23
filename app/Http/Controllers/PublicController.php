@@ -123,7 +123,7 @@ public function news()
         if (auth()->check()) {
             $user = auth()->user();
             $hasSertifikat = $user->sertifikats()->where('pelatihan_id', $pelatihan->id)->exists();
-            $hasPayment = $user->payments()->where('pelatihan_id', $pelatihan->id)->exists();
+            $hasPayment = $user->payments()->where('pelatihan_id', $pelatihan->id)->where('status', '!=', 'rejected')->exists();
             $pelatihan->is_taken = $hasSertifikat || $hasPayment;
         } else {
             $pelatihan->is_taken = false;

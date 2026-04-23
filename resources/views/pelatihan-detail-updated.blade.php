@@ -34,7 +34,7 @@
                     </div>
 
                 @elseif(auth()->check())
-                    <!-- KONDISI 2: USER SUDAH LOGIN - TAMPILKAN TOMBOL AMBIL -->
+                    <!-- KONDISI 2: USER SUDAH LOGIN - TOMBOL AJAX AMBIL -->
                     <button id="ambil-pelatihan-btn" class="btn btn-primary btn-lg" data-pelatihan-id="{{ $pelatihan->id }}">
                         Ambil Pelatihan Ini
                     </button>
@@ -54,7 +54,6 @@
             </div>
         </div>
     </div>
-</div>
 
     <!-- Ambil Pelatihan Modal -->
     <div class="modal fade" id="pelatihanModal" tabindex="-1" aria-labelledby="pelatihanModalLabel" aria-hidden="true">
@@ -65,66 +64,83 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="modal-body">
-                    <!-- Dynamic content -->
+                    <!-- Dynamic content here -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <a href="#" id="modal-action-link" class="btn btn-primary" style="display:none;">Lihat Pembayaran</a>
+                    <a href="#" id="modal-action-link" class="btn btn-primary" style="display: none;">Lihat Detail</a>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const btn = document.getElementById('ambil-pelatihan-btn');
-    if (!btn) return;
-    
     const modal = new bootstrap.Modal(document.getElementById('pelatihanModal'));
-    
-    btn.addEventListener('click', async (e) => {
-        e.preventDefault();
-        
-        const original = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memproses...';
-        
-        try {
-            const resp = await fetch(`/member/pelatihan/${btn.dataset.pelatihanId}/take`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                }
-            });
+
+    if (btn) {
+        btn.addEventListener('click', async function(e) {
+            e.preventDefault();
             
-            const data = await resp.json();
-            
-            if (data.success) {
-                document.getElementById('pelatihanModalLabel').textContent = '✅ ' + (data.message || 'Berhasil!');
-                document.getElementById('modal-body').innerHTML = '<div class="alert alert-success">' + (data.message || 'Pelatihan berhasil diambil. Tunggu konfirmasi admin.') + '</div>';
-                
-                if (data.redirect) {
-                    document.getElementById('modal-action-link').href = data.redirect;
-                    document.getElementById('modal-action-link').style.display = 'inline-block';
+            // Loading state
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Memproses...';
+
+            try {
+                const response = await fetch(`/member/pelatihan/${this.dataset.pelatihanId}/take`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') || document.querySelector('[name=csrf-token]').getAttribute('content')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Success modal
+                    document.getElementById('pelatihanModalLabel').textContent = '✅ Berhasil!';
+                    document.getElementById('modal-body').innerHTML = `
+                        <div class="alert alert-success">
+                            <strong>${data.message || 'Pelatihan berhasil diambil!'}</strong>
+                            <br>Tunggu konfirmasi dari admin.
+                        </div>
+                    `;
+                    
+                    if (data.redirect || data.payment_id) {
+                        document.getElementById('modal-action-link').href = data.redirect || `/member/payments/${data.payment_id}`;
+                        document.getElementById('modal-action-link').textContent = 'Lihat Pembayaran';
+                        document.getElementById('modal-action-link').style.display = 'inline-block';
+                    }
+                    
+                    // Reload page after modal close to update is_taken status
+                    document.getElementById('pelatihanModal').addEventListener('hidden.bs.modal', function () {
+                        location.reload();
+                    }, { once: true });
+                    
+                    modal.show();
+                } else {
+                    throw new Error(data.message || 'Terjadi kesalahan');
                 }
-                
-                // Reload after modal close
-                const mod = document.getElementById('pelatihanModal');
-                mod.addEventListener('hidden.bs.modal', () => location.reload(), {once: true});
-                
-                modal.show();
-            } else {
-                alert('Error: ' + (data.message || 'Gagal'));
+            } catch (error) {
+                // Error handling
+                const errorMsg = error.message || 'Gagal mengambil pelatihan. Pastikan Anda sudah login dan pelatihan tersedia.';
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger mt-3';
+                alertDiv.innerHTML = `<strong>Error:</strong> ${errorMsg}`;
+                btn.parentNode.insertBefore(alertDiv, btn.nextSibling);
+                setTimeout(() => alertDiv.remove(), 5000);
+            } finally {
+                // Reset button
+                btn.disabled = false;
+                btn.innerHTML = originalText;
             }
-        } catch (err) {
-            alert('Error: ' + err.message + '. Login ulang jika perlu.');
-        } finally {
-            btn.innerHTML = original;
-            btn.disabled = false;
-        }
-    });
+        });
+    }
 });
 </script>
 @endpush

@@ -18,13 +18,39 @@ class PelatihanController extends Controller
     {
         $user = auth()->user();
         $takenPelatihanIds = $user->sertifikats()->pluck('pelatihan_id')->toArray();
+        $takenPelatihanIds = array_unique(array_merge($takenPelatihanIds, $user->payments()->where('status', '!=', 'rejected')->pluck('pelatihan_id')->toArray()));
         $available = Pelatihan::where('status', 'active')
             ->whereNotIn('id', $takenPelatihanIds)
             ->latest()
             ->get();
-        $completed = $user->sertifikats()->with('pelatihan')->latest()->get();
+        
+        $completed = $user->sertifikats()
+            ->with('pelatihan')
+            ->latest()
+            ->get();
 
         return view('member.pelatihan.index', compact('available', 'completed'));
+    }
+
+    public function konfirmasi(Pelatihan $pelatihan)
+    {
+        $user = auth()->user();
+
+        if ($pelatihan->status !== 'active') {
+            return redirect('/pelatihan/' . $pelatihan->slug)->with('error', 'Pelatihan tidak tersedia.');
+        }
+
+        // Check if already has sertifikat for this pelatihan
+        if ($user->sertifikats()->where('pelatihan_id', $pelatihan->id)->exists()) {
+            return redirect('/pelatihan/' . $pelatihan->slug)->with('error', 'Anda sudah mengambil pelatihan ini.');
+        }
+
+        // Check if already has payment for this pelatihan
+        if ($user->payments()->where('pelatihan_id', $pelatihan->id)->exists()) {
+            return redirect('/pelatihan/' . $pelatihan->slug)->with('error', 'Anda sudah memulai pembayaran untuk pelatihan ini.');
+        }
+
+        return view('member.pelatihan.konfirmasi', compact('pelatihan'));
     }
 
     public function take(Pelatihan $pelatihan)
@@ -40,8 +66,8 @@ class PelatihanController extends Controller
             return back()->with('error', 'Anda sudah mengambil pelatihan ini.');
         }
 
-        // Check if already has payment for this pelatihan
-        if ($user->payments()->where('pelatihan_id', $pelatihan->id)->exists()) {
+        // Check if already has non-rejected payment for this pelatihan
+        if ($user->payments()->where('pelatihan_id', $pelatihan->id)->where('status', '!=', 'rejected')->exists()) {
             return back()->with('error', 'Anda sudah memulai pembayaran untuk pelatihan ini.');
         }
 
@@ -61,11 +87,11 @@ class PelatihanController extends Controller
                     'payment_id' => $payment->id,
                     'invoice_no' => $invoiceNo,
                     'message' => 'Pembayaran pelatihan berhasil dibuat.',
-                    'redirect' => route('member.payment.show', $payment)
+                    'redirect' => route('member.payments.show', $payment)
                 ]);
             }
 
-            return redirect()->route('member.payment.show', $payment)->with('success', 'Pembayaran pelatihan berhasil dibuat. Silakan lakukan pembayaran dan unggah bukti.');
+            return redirect()->route('member.payments.show', $payment)->with('success', 'Pembayaran pelatihan berhasil dibuat. Silakan lakukan pembayaran dan unggah bukti.');
         } else {
             // Free: directly create sertifikat pending
             $user->sertifikats()->create([

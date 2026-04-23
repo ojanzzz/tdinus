@@ -1,0 +1,284 @@
+/* Payments Responsive Styles - Added for member payments pages */
+
+/* List Page */
+.responsive-payments {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.payment-card {
+  padding: 1.75rem;
+  transition: box-shadow 0.3s ease;
+  border: 1px solid var(--border);
+}
+
+.payment-card:hover {
+  box-shadow: var(--shadow-strong);
+}
+
+.payment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.payment-date {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.payment-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.payment-amount {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--brand-accent);
+  margin-bottom: 1rem;
+}
+
+.payment-actions {
+  margin-top: 1rem;
+}
+
+.payment-actions .btn-primary {
+  justify-content: center;
+}
+
+/* Detail Page */
+.payment-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.payment-invoice-card {
+  background: var(--surface);
+}
+
+.payment-instructions-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.payment-instructions-card h2,
+.payment-instructions-card h4,
+.payment-instructions-card label {
+  color: white;
+}
+
+.payment-instructions-card p {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.invoice-header {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+  padding-bottom: 1rem;
+}
+
+.invoice-title {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.6rem;
+}
+
+.invoice-number {
+  margin: 0;
+  opacity: 0.8;
+  font-size: 0.95rem;
+}
+
+.payment-pelatihan {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.payment-amount-section {
+  background: var(--surface-soft);
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  margin: 1rem 0;
+}
+
+.payment-amount-large {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--brand-accent);
+  margin: 0.25rem 0 0 0;
+}
+
+.payment-method-card {
+  background: rgba(255, 255, 255, 0.12);
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1rem;
+  backdrop-filter: blur(10px);
+}
+
+.payment-method-card h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+}
+
+.bank-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.bank-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bank-row span {
+  opacity: 0.9;
+}
+
+.bank-name {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  text-align: center;
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.payment-tip-card {
+  background: rgba(255, 255, 255, 0.18);
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--brand-gold);
+}
+
+.section-header {
+  margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+  margin: 0 0 0.5rem 0;
+}
+
+.section-header p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.status-large {
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+}
+
+/* Enhanced Status Badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-paid {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-rejected {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* Print Styles */
+@media print {
+  .admin-header, 
+  .form-card:last-of-type,
+  .btn-outline:not([onclick="window.print()"]), 
+  nav, 
+  .pagination-wrap { 
+      display: none !important; 
+  }
+  .form-card {
+      box-shadow: none !important;
+      border: 1px solid #000 !important;
+      page-break-inside: avoid;
+  }
+  .payment-instructions-card {
+      background: #f0f0f0 !important;
+      color: #000 !important;
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .responsive-payments {
+    gap: 1.25rem;
+  }
+  
+  .payment-card {
+    padding: 1.5rem;
+  }
+  
+  .payment-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .payment-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .payment-amount-large {
+    font-size: 1.6rem;
+  }
+  
+  .bank-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .bank-name {
+    text-align: left;
+  }
+  
+  .payment-method-card {
+    padding: 1rem;
+  }
+  
+  .invoice-title {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-amount {
+    font-size: 1.3rem;
+  }
+  
+  .payment-title {
+    font-size: 1rem;
+  }
+}

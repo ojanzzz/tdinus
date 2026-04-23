@@ -3,21 +3,21 @@
 @section('admin-content')
 <div class="admin-header">
     <div>
-        <h1 class="page-title">Pelatihan</h1>
-        <p class="page-subtitle">Kelola program pelatihan.</p>
+        <h1 class="page-title">📚 Pelatihan</h1>
+        <p class="page-subtitle">Kelola program pelatihan dan kursus online.</p>
     </div>
-    <a href="{{ route('admin.pelatihan.create') }}" class="btn-primary">Tambah Pelatihan</a>
+    <a href="{{ route('admin.pelatihan.create') }}" class="btn-primary">+ Tambah Pelatihan</a>
 </div>
 
 @if(session('success'))
-    <div class="alert-success">{{ session('success') }}</div>
+    <div class="alert-success">✓ {{ session('success') }}</div>
 @endif
 
 <div class="table-wrap">
     <table class="admin-table">
         <thead>
             <tr>
-                <th>Judul</th>
+                <th>Judul Pelatihan</th>
                 <th>Durasi</th>
                 <th>Harga</th>
                 <th>Gambar</th>
@@ -28,29 +28,45 @@
         <tbody>
             @forelse($pelatihans as $item)
                 <tr>
-                    <td>{{ $item->title }}</td>
-                    <td>{{ $item->duration ?? '-' }}</td>
-                    <td>Rp {{ number_format($item->price ?? 0,0,',','.') }}</td>
+                    <td><strong>{{ Str::limit($item->title, 35) }}</strong></td>
+                    <td>
+                        <small>{{ $item->duration ?? '-' }}</small>
+                    </td>
+                    <td>
+                        <strong style="color: var(--primary-color);">
+                            @if($item->price > 0)
+                                Rp {{ number_format($item->price ?? 0, 0, ',', '.') }}
+                            @else
+                                Gratis
+                            @endif
+                        </strong>
+                    </td>
                     <td>
                         @if($item->image_path)
                             <img src="{{ $item->image_path }}" alt="{{ $item->title }}" class="thumb-image">
                         @else
-                            -
+                            <span style="color: #999;">-</span>
                         @endif
                     </td>
-                    <td>{{ $item->status === 'active' ? 'Aktif' : 'Nonaktif' }}</td>
+                    <td>
+                        <span class="status-badge status-{{ $item->status === 'active' ? 'completed' : 'pending' }}">
+                            {{ $item->status === 'active' ? '✓ Aktif' : '⏳ Nonaktif' }}
+                        </span>
+                    </td>
                     <td class="table-actions">
-                        <a href="{{ route('admin.pelatihan.edit', $item) }}" class="btn-outline">Edit</a>
+                        <a href="{{ route('admin.pelatihan.edit', $item) }}" class="btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Edit</a>
                         <form method="POST" action="{{ route('admin.pelatihan.destroy', $item) }}" style="display: inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn-danger" onclick="return confirm('Hapus pelatihan ini?')">Hapus</button>
+                            <button type="submit" class="btn-danger" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="return confirm('Yakin hapus pelatihan ini?')">Hapus</button>
                         </form>
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6">Belum ada pelatihan.</td>
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: #999;">
+                        📋 Belum ada pelatihan. <a href="{{ route('admin.pelatihan.create') }}" style="color: var(--primary-color);">Buat pelatihan pertama</a>
+                    </td>
                 </tr>
             @endforelse
         </tbody>

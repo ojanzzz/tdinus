@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('invoice_no')->unique();
             $table->enum('status', ['pending', 'paid', 'rejected'])->default('pending');
             $table->text('notes')->nullable();
+            $table->string('bukti_path')->nullable();
             $table->timestamps();
         });
     }

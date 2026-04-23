@@ -3,59 +3,81 @@
 @section('member-content')
 <div class="admin-header">
     <div>
-        <h1 class="page-title">Edit Profile</h1>
+        <h1 class="page-title">👤 Edit Profile Saya</h1>
+        <p class="page-subtitle">Perbarui informasi pribadi Anda.</p>
     </div>
-    <a href="{{ route('member.dashboard') }}" class="btn-outline">Kembali Dashboard</a>
+    <a href="{{ route('member.dashboard') }}" class="btn-outline">← Kembali</a>
 </div>
 
 @if(session('success'))
-    <div class="alert-success">{{ session('success') }}</div>
+    <div class="alert-success">✓ {{ session('success') }}</div>
 @endif
 
 <div class="form-card">
     <form method="POST" action="/member/profile" class="form-stack" enctype="multipart/form-data">
         @csrf
         @method('PATCH')
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <label>
+                <span style="color: var(--dark-color); font-weight: 600;">Nama Lengkap</span>
+                <input type="text" name="name" value="{{ old('name', $user->name) }}" class="form-input @error('name') is-invalid @enderror" placeholder="Masukkan nama lengkap" required>
+                @error('name')
+                    <span class="form-error">{{ $message }}</span>
+                @enderror
+            </label>
+
+            <label>
+                <span style="color: var(--dark-color); font-weight: 600;">Email</span>
+                <input type="email" name="email" value="{{ old('email', $user->email) }}" class="form-input @error('email') is-invalid @enderror" placeholder="email@example.com" required>
+                @error('email')
+                    <span class="form-error">{{ $message }}</span>
+                @enderror
+            </label>
+        </div>
+
         <label>
-            Nama Lengkap
-            <input type="text" name="name" value="{{ old('name', $user->name) }}" class="form-input @error('name') is-invalid @enderror" required>
-            @error('name')
-                <span class="invalid-feedback">{{ $message }}</span>
-            @enderror
-        </label>
-        <label>
-            Email
-            <input type="email" name="email" value="{{ old('email', $user->email) }}" class="form-input @error('email') is-invalid @enderror" required>
-            @error('email')
-                <span class="invalid-feedback">{{ $message }}</span>
-            @enderror
-        </label>
-        <label>
-            No Telepon
-            <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="form-input @error('phone') is-invalid @enderror">
+            <span style="color: var(--dark-color); font-weight: 600;">Nomor Telepon</span>
+            <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="form-input @error('phone') is-invalid @enderror" placeholder="+62 812 3456 7890">
             @error('phone')
-                <span class="invalid-feedback">{{ $message }}</span>
+                <span class="form-error">{{ $message }}</span>
             @enderror
         </label>
+
         <label>
-            Alamat
-            <textarea name="address" rows="3" class="form-input @error('address') is-invalid @enderror">{{ old('address', $user->address) }}</textarea>
+            <span style="color: var(--dark-color); font-weight: 600;">Alamat Lengkap</span>
+            <textarea name="address" rows="4" class="form-input @error('address') is-invalid @enderror" placeholder="Jalan, Kelurahan, Kecamatan, Kota...">{{ old('address', $user->address) }}</textarea>
             @error('address')
-                <span class="invalid-feedback">{{ $message }}</span>
+                <span class="form-error">{{ $message }}</span>
             @enderror
         </label>
+
         <label>
-            Layanan Dipilih (JSON array)
-            <textarea name="selected_services" rows="3" class="form-input @error('selected_services') is-invalid @enderror">{{ old('selected_services', $user->selected_services ? json_encode($user->selected_services) : '[]') }}</textarea>
-            <small>Contoh: ["Jurnal Publikasi", "Pelatihan Laravel"]</small>
+            <span style="color: var(--dark-color); font-weight: 600;">Layanan Terpilih</span>
+            <textarea name="selected_services" rows="3" class="form-input @error('selected_services') is-invalid @enderror" placeholder='["Layanan 1", "Layanan 2"]'>{{ old('selected_services', $user->selected_services ? json_encode($user->selected_services) : '[]') }}</textarea>
+            <small style="color: #999;">Format JSON. Contoh: ["Jurnal Publikasi", "Pelatihan Laravel"]</small>
             @error('selected_services')
-                <span class="invalid-feedback">{{ $message }}</span>
+                <span class="form-error">{{ $message }}</span>
             @enderror
         </label>
+
         <div class="form-actions">
-            <button type="submit" class="btn-primary">Simpan Perubahan</button>
+            <a href="{{ route('member.dashboard') }}" class="btn-outline">Batal</a>
+            <button type="submit" class="btn-primary">✓ Simpan Perubahan</button>
         </div>
     </form>
 </div>
+
+<style>
+    @media (max-width: 768px) {
+        .form-card {
+            padding: 1.5rem 1rem;
+        }
+        
+        [style*="grid-template-columns: 1fr 1fr"] {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
 @endsection
 

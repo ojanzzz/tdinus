@@ -8,6 +8,7 @@
     <meta name="author" content="Teras Digital Nusantara">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:title" content="Teras Digital Nusantara...">
 <meta property="og:image" content="http://127.0.0.1:8000/storage/gambar-berita.jpg">
@@ -42,8 +43,10 @@
     <link rel="preload" href="/images/logo-tdinus.png" as="image">
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" as="style">
 
-    <link rel="stylesheet" href="/css/app.css">
+<link rel="stylesheet" href="/css/app.css">
     <link rel="stylesheet" href="/css/news-sidebar.css">
+    <link rel="stylesheet" href="/css/payments-responsive.css">
+    <link rel="stylesheet" href="/css/admin-responsive.css">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
