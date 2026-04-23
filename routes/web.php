@@ -59,6 +59,7 @@ Route::middleware(['auth', 'role:admin', 'security.headers', 'input.sanitize', '
     Route::patch('members/sertifikat/{sertifikat}/reject', [MemberUserController::class, 'rejectSertifikat'])->name('admin.members.sertifikat.reject');
     Route::patch('members/sertifikat/{sertifikat}/update-status', [MemberUserController::class, 'updateSertifikatStatus'])->name('admin.members.sertifikat.update-status');
     Route::resource('payments', AdminPaymentController::class)->only(['index']);
+    Route::get('payments/{payment}/bukti', [AdminPaymentController::class, 'bukti'])->name('payments.bukti');
     Route::patch('payments/{payment}/status', [AdminPaymentController::class, 'updateStatus'])->name('payments.update-status');
 });
 
@@ -71,5 +72,6 @@ Route::middleware(['auth', 'role:member', 'security.headers', 'input.sanitize', 
     Route::resource('sertifikat', MemberSertifikatController::class)->only(['index']);
     Route::resource('profile', ProfileController::class)->only(['index', 'update']);
     Route::resource('payments', MemberPaymentController::class)->only(['index', 'show']);
+    Route::get('payments/{payment}/bukti', [MemberPaymentController::class, 'bukti'])->name('payments.bukti');
     Route::post('payments/{payment}/upload-bukti', [MemberPaymentController::class, 'uploadBukti'])->name('payments.upload-bukti');
 });

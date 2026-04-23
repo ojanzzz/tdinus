@@ -38,7 +38,7 @@
                     <td>Rp {{ number_format($payment->amount, 0, ',', '.') }}</td>
                     <td>
                         @if($payment->bukti_path)
-                            <a href="{{ Storage::url($payment->bukti_path) }}" target="_blank" class="btn btn-sm btn-outline-primary">Bukti</a>
+                            <a href="{{ route('admin.payments.bukti', $payment) }}" target="_blank" class="btn btn-sm btn-outline-primary">Bukti</a>
                         @else
                             -
                         @endif

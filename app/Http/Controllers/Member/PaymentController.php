@@ -87,6 +87,21 @@ class PaymentController extends Controller
         return back()->with('success', 'Bukti pembayaran berhasil diunggah. Menunggu konfirmasi admin.');
     }
 
+    public function bukti(Payment $payment)
+    {
+        if (!$this->belongsToAuthenticatedMember($payment)) {
+            abort(403);
+        }
+
+        if (!$payment->bukti_path || !Storage::disk('public')->exists($payment->bukti_path)) {
+            abort(404, 'Bukti pembayaran tidak ditemukan.');
+        }
+
+        return response()->file(Storage::disk('public')->path($payment->bukti_path), [
+            'Content-Type' => Storage::disk('public')->mimeType($payment->bukti_path) ?: 'application/octet-stream',
+        ]);
+    }
+
     private function belongsToAuthenticatedMember(Payment $payment): bool
     {
         return (int) $payment->user_id === (int) auth()->id();

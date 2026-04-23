@@ -7,6 +7,7 @@ use App\Models\Payment;
 use App\Models\Sertifikat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PaymentController extends Controller
 {
@@ -17,6 +18,17 @@ class PaymentController extends Controller
             ->paginate(20);
 
         return view('admin.payments.index', compact('payments'));
+    }
+
+    public function bukti(Payment $payment)
+    {
+        if (!$payment->bukti_path || !Storage::disk('public')->exists($payment->bukti_path)) {
+            abort(404, 'Bukti pembayaran tidak ditemukan.');
+        }
+
+        return response()->file(Storage::disk('public')->path($payment->bukti_path), [
+            'Content-Type' => Storage::disk('public')->mimeType($payment->bukti_path) ?: 'application/octet-stream',
+        ]);
     }
 
     public function updateStatus(Request $request, Payment $payment)

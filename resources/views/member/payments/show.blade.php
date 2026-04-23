@@ -159,7 +159,7 @@
         </div>
         @if($payment->bukti_path)
             <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #c3e6cb;">
-                <a href="{{ Storage::url($payment->bukti_path) }}" target="_blank" class="btn-outline">
+                <a href="{{ route('member.payments.bukti', $payment) }}" target="_blank" class="btn-outline">
                     👁️ Lihat Bukti yang Diunggah
                 </a>
             </div>
