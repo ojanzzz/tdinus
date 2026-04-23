@@ -19,7 +19,9 @@ class PaymentController extends Controller
     public function show(Payment $payment)
     {
         if ($payment->user_id !== auth()->id()) {
-            abort(403);
+            return redirect()
+                ->route('member.payments.index')
+                ->with('error', 'Invoice pembayaran tidak ditemukan untuk akun Anda. Silakan pilih invoice dari daftar pembayaran.');
         }
 
         $payment->load('pelatihan');
@@ -33,7 +35,13 @@ class PaymentController extends Controller
 
     public function uploadBukti(Request $request, Payment $payment)
     {
-        if ($payment->user_id !== auth()->id() || $payment->status !== 'pending') {
+        if ($payment->user_id !== auth()->id()) {
+            return redirect()
+                ->route('member.payments.index')
+                ->with('error', 'Invoice pembayaran tidak ditemukan untuk akun Anda.');
+        }
+
+        if ($payment->status !== 'pending') {
             return back()->with('error', 'Tidak dapat mengunggah bukti pembayaran.');
         }
 
