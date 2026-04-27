@@ -94,6 +94,9 @@
     <script src="/js/share-buttons.js" defer></script>
 @endpush
 
+@section('meta_description', Str::limit(strip_tags($news->excerpt), 150))
+@section('meta_image', asset('storage/' . ($news->image_path ?? 'default-image.jpg')))
+
 @section('content')
     <section class="section">
         <div class="news-layout">

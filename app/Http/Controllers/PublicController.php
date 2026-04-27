@@ -104,7 +104,7 @@ public function news()
             ->sort();
 
         $shareButtons = new HtmlString(
-            ShareButtons::currentPage($news->title, [
+            ShareButtons::page(url('/berita/' . $news->slug), $news->title, [
                 'block_prefix' => '<div class="share-buttons" id="social-buttons">',
                 'block_suffix' => '</div>',
             ])
