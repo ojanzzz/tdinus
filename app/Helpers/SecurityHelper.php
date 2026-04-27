@@ -109,3 +109,31 @@ if (!function_exists('sanitizeInput')) {
         return $input;
     }
 }
+
+if (! function_exists('optimized_asset_path')) {
+    /**
+     * Prefer a generated WebP sibling when it exists on disk.
+     */
+    function optimized_asset_path(?string $path, ?string $fallback = null): string
+    {
+        $resolvedPath = $path ?: $fallback ?: '';
+
+        if ($resolvedPath === '') {
+            return '';
+        }
+
+        $publicPath = parse_url($resolvedPath, PHP_URL_PATH) ?: $resolvedPath;
+
+        if (! preg_match('/\.(jpe?g|png)$/i', $publicPath)) {
+            return $resolvedPath;
+        }
+
+        $webpPath = preg_replace('/\.(jpe?g|png)$/i', '.webp', $publicPath);
+
+        if ($webpPath && file_exists(public_path(ltrim($webpPath, '/')))) {
+            return $webpPath;
+        }
+
+        return $resolvedPath;
+    }
+}

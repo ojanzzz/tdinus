@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', '{{ $pelatihan->title }} - Teras Digital Nusantara')
+@section('title', $pelatihan->title . ' - Teras Digital Nusantara')
 
 @section('content')
 <section class="section">
@@ -8,7 +8,9 @@
         <div class="news-detail">
             <article class="news-detail-card">
                 @if($pelatihan->image_path)
-                    <img src="{{ $pelatihan->image_path }}" alt="{{ $pelatihan->title }}" class="news-detail-image">
+                    <img src="{{ optimized_asset_path($pelatihan->image_path) }}" alt="{{ $pelatihan->title }}"
+                        class="news-detail-image" width="1200" height="675" loading="eager" decoding="async"
+                        fetchpriority="high">
                 @endif
                 <div class="news-detail-body">
                     <h1>{{ $pelatihan->title }}</h1>

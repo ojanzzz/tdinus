@@ -9,8 +9,9 @@
                         <div class="site-header-main-section-left site-header-section">
                             <div class="site-branding">
                                 <a href="/" class="brand has-logo-image">
-                                    <img src="/images/logo-tdinus.png" alt="Teras Digital Nusantara"
-                                        class="custom-logo">
+                                    <img src="{{ $logoPath ?? optimized_asset_path('/images/logo-tdinus.png') }}"
+                                        alt="Teras Digital Nusantara" class="custom-logo" width="170" height="52"
+                                        fetchpriority="high" decoding="async">
                                 </a>
                             </div>
                         </div>

@@ -20,8 +20,8 @@ class SecurityHeaders
         // Content Security Policy - FIXED CSP syntax + added 'unsafe-eval' for JS encodeURIComponent
         $csp = "default-src 'self'; " .
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://code.jquery.com https://cdn.tiny.cloud https://www.tiny.cloud; " .
-"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tiny.cloud https://www.tiny.cloud; " .
-            "font-src 'self' https://fonts.gstatic.com https://cdn.tiny.cloud https://www.tiny.cloud; " .
+"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.tiny.cloud https://www.tiny.cloud; " .
+            "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.tiny.cloud https://www.tiny.cloud; " .
 
             "img-src 'self' data: https:; " .
 "connect-src 'self' https://www.tiny.cloud https://cdn.tiny.cloud; " .
@@ -58,4 +58,3 @@ class SecurityHeaders
         return $response;
     }
 }
-

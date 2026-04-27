@@ -1,14 +1,26 @@
 @extends('layouts.app')
 
+@php
+    $homeSliders = $sliders ?? collect();
+    $heroPreloadPath = optimized_asset_path(optional($homeSliders->first())->image_path ?? null, '/images/hero-bg.png');
+@endphp
+
+@push('preloads')
+    <link rel="preload" href="{{ $heroPreloadPath }}" as="image" fetchpriority="high">
+@endpush
+
 @section('content')
 <!-- Hero Section -->
 <section class="kb-row-layout-hero hero-slider">
     <div class="hero-slider-track">
-        @php
-            $sliders = $sliders ?? collect();
-        @endphp
-        @forelse($sliders as $slider)
-            <div class="hero-slide" style="background-image: url('{{ $slider->image_path ?? '/images/hero-bg.png' }}');">
+        @forelse($homeSliders as $slider)
+            @php
+                $slideImage = optimized_asset_path($slider->image_path, '/images/hero-bg.png');
+            @endphp
+            <div class="hero-slide">
+                <img src="{{ $slideImage }}" alt="" class="hero-slide-media" width="1600" height="900"
+                    @if ($loop->first) fetchpriority="high" loading="eager" decoding="sync"
+                    @else loading="lazy" decoding="async" @endif>
                 <div class="hero-content">
                     <h1>{{ $slider->title }}</h1>
                     @if($slider->description)
@@ -17,7 +29,9 @@
                 </div>
             </div>
         @empty
-            <div class="hero-slide" style="background-image: url('/images/hero-bg.png');">
+            <div class="hero-slide">
+                <img src="{{ optimized_asset_path('/images/hero-bg.png') }}" alt="" class="hero-slide-media"
+                    width="1600" height="900" fetchpriority="high" loading="eager" decoding="sync">
                 <div class="hero-content">
                     <h1>TINGKATKAN PUBLIKASI ILMIAH ANDA DENGAN TDINUS</h1>
                     <p>Beberapa pilihan jurnal yang dapat anda sesuaikan dengan scope penelitian</p>
@@ -38,15 +52,21 @@
          <h2>Layanan Kami</h2></div>
         <div class="hero-grid">
             @forelse($services as $service)
+                @php
+                    $serviceImage = optimized_asset_path($service->image_path, '/images/journal-1.jpg');
+                @endphp
                 <div class="hero-card">
-                    <img src="{{ $service->image_path ?? '/images/journal-1.jpg' }}" alt="{{ $service->name }}">
+                    <img src="{{ $serviceImage }}" alt="{{ $service->name }}" width="640" height="480"
+                        loading="lazy" decoding="async">
                     <h3>{{ $service->name }}</h3>
                     @if($service->description)
                         <p>{{ $service->description }}</p>
                     @endif
+                    <div class="card-actions">
   <a href="{{ $service->url_layanan ? (preg_match('/^https?:\/\//', $service->url_layanan) ? $service->url_layanan : 'https://' . $service->url_layanan) : '/kontak-kami' }}" class="btn-submit" {{ $service->url_layanan ? 'target="_blank" rel="noopener noreferrer"' : '' }}>
                         Hubungi
                     </a>
+                    </div>
                 </div>
             @empty
                 <div class="hero-card">
@@ -64,8 +84,12 @@
         <h2>Berita Terbaru</h2>
         <div class="news-grid">
             @forelse($newsItems as $item)
+                @php
+                    $newsImage = optimized_asset_path($item->image_path, '/images/news1.jpg');
+                @endphp
                 <article class="news-card">
-                    <img src="{{ $item->image_path ?? '/images/news1.jpg' }}" alt="{{ $item->title }}">
+                    <img src="{{ $newsImage }}" alt="{{ $item->title }}" width="640" height="400"
+                        loading="lazy" decoding="async">
                     <div class="news-card-content">
                         <span class="news-category">{{ $item->category ?? 'Berita' }}</span>
                         <h3 class="news-title">{{ $item->title }}</h3>
@@ -93,8 +117,12 @@
         </div>
         <div class="hero-grid">
             @forelse($pelatihans ?? [] as $pelatihan)
+                @php
+                    $pelatihanImage = optimized_asset_path($pelatihan->image_path, '/images/journal-1.jpg');
+                @endphp
                 <div class="hero-card">
-                    <img src="{{ $pelatihan->image_path ?? '/images/journal-1.jpg' }}" alt="{{ $pelatihan->title }}">
+                    <img src="{{ $pelatihanImage }}" alt="{{ $pelatihan->title }}" width="640" height="480"
+                        loading="lazy" decoding="async">
                     <h3>{{ $pelatihan->title }}</h3>
                     @if($pelatihan->duration)
                         <p>{{ $pelatihan->duration }}</p>

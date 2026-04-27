@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4ededc784807f6c79e8c7738451f5615",
+    "content-hash": "597c463b1e5a7fd853d540f0c7a57521",
     "packages": [
         {
             "name": "brick/math",
@@ -1052,6 +1052,76 @@
                 }
             ],
             "time": "2025-08-22T14:27:06+00:00"
+        },
+        {
+            "name": "kudashevs/laravel-share-buttons",
+            "version": "v6.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kudashevs/laravel-share-buttons.git",
+                "reference": "717420ad30d40e04f0c1e2b0c3af2f1b3891a595"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kudashevs/laravel-share-buttons/zipball/717420ad30d40e04f0c1e2b0c3af2f1b3891a595",
+                "reference": "717420ad30d40e04f0c1e2b0c3af2f1b3891a595",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8.0|^9.0",
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^10.1|^11.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "ShareButtons": "Kudashevs\\ShareButtons\\Facades\\ShareButtonsFacade"
+                    },
+                    "providers": [
+                        "Kudashevs\\ShareButtons\\Providers\\ShareButtonsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Kudashevs\\ShareButtons\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sergey Kudashev",
+                    "email": "kudashevs@gmail.com",
+                    "homepage": "https://kudashevs.com",
+                    "role": "developer"
+                },
+                {
+                    "name": "Joren Van Hocht",
+                    "email": "joren@codeswitch.be",
+                    "homepage": "https://codeswitch.be",
+                    "role": "creator"
+                }
+            ],
+            "description": "A Laravel social media share buttons package.",
+            "homepage": "https://github.com/kudashevs/laravel-share-buttons",
+            "keywords": [
+                "laravel",
+                "share",
+                "share buttons",
+                "social links"
+            ],
+            "support": {
+                "issues": "https://github.com/kudashevs/laravel-share-buttons/issues",
+                "source": "https://github.com/kudashevs/laravel-share-buttons/tree/v6.1.1"
+            },
+            "time": "2025-01-14T19:09:39+00:00"
         },
         {
             "name": "laravel/framework",

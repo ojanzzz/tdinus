@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pelatihan;
+use App\Support\ImageOptimizer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 class PelatihanController extends Controller
@@ -39,10 +39,7 @@ class PelatihanController extends Controller
         $data['slug'] = $this->uniqueSlug($data['slug'] ?? $data['title']);
 
         if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads'), $filename);
-            $data['image_path'] = '/uploads/' . $filename;
+            $data['image_path'] = ImageOptimizer::storeUploadedImage($request->file('image'));
         }
 
         $data['status'] = $request->boolean('status', true) ? 'active' : 'inactive';
@@ -83,10 +80,7 @@ class PelatihanController extends Controller
 
         if ($request->hasFile('image')) {
             $this->deleteImageIfExists($pelatihan->image_path);
-            $file = $request->file('image');
-            $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads'), $filename);
-            $data['image_path'] = '/uploads/' . $filename;
+            $data['image_path'] = ImageOptimizer::storeUploadedImage($request->file('image'));
         }
 
         $data['status'] = $request->boolean('status', true) ? 'active' : 'inactive';
@@ -124,13 +118,6 @@ class PelatihanController extends Controller
 
     private function deleteImageIfExists(?string $path): void
     {
-        if (!$path) {
-            return;
-        }
-
-        $fullPath = public_path(ltrim($path, '/'));
-        if (File::exists($fullPath)) {
-            File::delete($fullPath);
-        }
+        ImageOptimizer::deletePublicImage($path);
     }
 }

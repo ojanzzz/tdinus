@@ -2,11 +2,16 @@
 
 @section('title', 'Pelatihan - Teras Digital Nusantara')
 
+@push('preloads')
+    <link rel="preload" href="{{ optimized_asset_path('/images/hero-bg.png') }}" as="image" fetchpriority="high">
+@endpush
+
 @section('content')
 <!-- Hero Section for Pelatihan -->
 <section class="kb-row-layout-hero hero-slider pelatihan-hero">
-    <div class="hero-slide" style="background-image: url('/images/hero-bg.png');">
-    
+    <div class="hero-slide">
+        <img src="{{ optimized_asset_path('/images/hero-bg.png') }}" alt="" class="hero-slide-media"
+            width="1600" height="900" fetchpriority="high" loading="eager" decoding="sync">
     </div>
 </section>
 
@@ -17,8 +22,12 @@
         </div>
         <div class="hero-grid">
             @forelse($pelatihans as $pelatihan)
+                @php
+                    $pelatihanImage = optimized_asset_path($pelatihan->image_path, '/images/journal-1.jpg');
+                @endphp
                 <div class="hero-card">
-                    <img src="{{ $pelatihan->image_path ?? '/images/journal-1.jpg' }}" alt="{{ $pelatihan->title }}">
+                    <img src="{{ $pelatihanImage }}" alt="{{ $pelatihan->title }}" width="640" height="480"
+                        loading="lazy" decoding="async">
                     <h3>{{ $pelatihan->title }}</h3>
                     @if($pelatihan->duration)
                         <p><strong>Durasi:</strong> {{ $pelatihan->duration }}</p>
@@ -207,5 +216,4 @@
         });
     });
 </script>
-
 

@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\News;
-use App\Models\Service;
 use App\Models\Pelatihan;
+use App\Models\Service;
 use App\Models\Slider;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\HtmlString;
+use Kudashevs\ShareButtons\Facades\ShareButtonsFacade as ShareButtons;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
-use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class PublicController extends Controller
 {
@@ -101,7 +103,35 @@ public function news()
             ->pluck('category')
             ->sort();
 
-        return view('berita-detail', compact('news', 'categories'));
+        $shareButtons = new HtmlString(
+            ShareButtons::currentPage($news->title, [
+                'block_prefix' => '<div class="share-buttons" id="social-buttons">',
+                'block_suffix' => '</div>',
+            ])
+                ->facebook([
+                    'class' => 'share-btn share-btn--facebook',
+                    'title' => 'Bagikan ke Facebook',
+                    'rel' => 'noopener noreferrer nofollow',
+                ])
+                ->twitter([
+                    'class' => 'share-btn share-btn--x',
+                    'title' => 'Bagikan ke X',
+                    'rel' => 'noopener noreferrer nofollow',
+                ])
+                ->whatsapp([
+                    'class' => 'share-btn share-btn--whatsapp',
+                    'title' => 'Bagikan ke WhatsApp',
+                    'rel' => 'noopener noreferrer nofollow',
+                ])
+                ->copylink([
+                    'class' => 'share-btn share-btn--copy',
+                    'title' => 'Salin tautan berita',
+                    'rel' => 'noopener noreferrer nofollow',
+                ])
+                ->render()
+        );
+
+        return view('berita-detail', compact('news', 'categories', 'shareButtons'));
     }
 
     public function pelatihan()

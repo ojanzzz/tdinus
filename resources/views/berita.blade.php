@@ -2,6 +2,11 @@
 @section('meta_title', $newsItems->first()->title ?? 'Berita Terbaru')
 @section('meta_description', Str::limit(strip_tags($newsItems->first()->excerpt ?? 'Baca berita terbaru kami'), 150))
 @section('meta_image', asset('storage/' . ($newsItems->first()->image ?? 'default-image.jpg')))
+
+@push('styles')
+    <link rel="stylesheet" href="/css/news-sidebar.css">
+@endpush
+
 @section('content')
     <section class="section">
         <div class="container">
@@ -11,8 +16,12 @@
                 <main class="news-main">
                     <div class="news-grid">
                         @forelse($newsItems as $item)
+                            @php
+                                $newsImage = optimized_asset_path($item->image_path, '/images/news1.jpg');
+                            @endphp
                             <article class="news-card">
-                                <img src="{{ $item->image_path ?? '/images/news1.jpg' }}" alt="{{ $item->title }}">
+                                <img src="{{ $newsImage }}" alt="{{ $item->title }}" width="640" height="400"
+                                    loading="lazy" decoding="async">
                                 <div class="news-card-content">
                                     <h3 class="news-title">{{ $item->title }}</h3>
                                     <span class="news-category">{{ $item->category ?? 'Berita' }}</span>

@@ -4,9 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Service;
+use App\Support\ImageOptimizer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 
 class ServiceController extends Controller
 {
@@ -33,10 +32,7 @@ class ServiceController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads'), $filename);
-            $data['image_path'] = '/uploads/' . $filename;
+            $data['image_path'] = ImageOptimizer::storeUploadedImage($request->file('image'));
         }
 
         $data['is_active'] = $request->boolean('is_active');
@@ -64,10 +60,7 @@ class ServiceController extends Controller
 
         if ($request->hasFile('image')) {
             $this->deleteImageIfExists($service->image_path);
-            $file = $request->file('image');
-            $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads'), $filename);
-            $data['image_path'] = '/uploads/' . $filename;
+            $data['image_path'] = ImageOptimizer::storeUploadedImage($request->file('image'));
         }
 
         $data['is_active'] = $request->boolean('is_active');
@@ -89,14 +82,6 @@ class ServiceController extends Controller
 
     private function deleteImageIfExists(?string $path): void
     {
-        if (!$path) {
-            return;
-        }
-
-        $fullPath = public_path(ltrim($path, '/'));
-        if (File::exists($fullPath)) {
-            File::delete($fullPath);
-        }
+        ImageOptimizer::deletePublicImage($path);
     }
 }
-

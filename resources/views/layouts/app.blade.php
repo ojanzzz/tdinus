@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    @php
+        $fontStylesheet = 'https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap';
+        $logoPath = optimized_asset_path('/images/logo-tdinus.png');
+    @endphp
     <meta charset="UTF-8">
     <meta name="robots" content="index, follow">
     <meta name="description" content="Teras Digital Nusantara (Tdinus) adalah perusahaan yang bergerak di bidang pengembangan teknologi informasi dan transformasi digital, dengan fokus pada publikasi ilmiah, jurnal, dan pelatihan.">
@@ -40,17 +44,23 @@
     <link rel="manifest" href="/images/favicon/site.webmanifest">
     
     <!-- Preload critical assets -->
-    <link rel="preload" href="/images/logo-tdinus.png" as="image">
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" as="style">
+    <link rel="preload" href="{{ $logoPath }}" as="image" fetchpriority="high">
+    @stack('preloads')
 
-<link rel="stylesheet" href="/css/app.css">
-    <link rel="stylesheet" href="/css/news-sidebar.css">
-    <link rel="stylesheet" href="/css/payments-responsive.css">
-    <link rel="stylesheet" href="/css/admin-responsive.css">
+    <link rel="stylesheet" href="/css/app.css">
+    @if (request()->is('admin*') || request()->is('member*'))
+        <link rel="stylesheet" href="/css/admin-responsive.css">
+    @endif
+    @if (request()->routeIs('member.payments.*'))
+        <link rel="stylesheet" href="/css/payments-responsive.css">
+    @endif
+    @stack('styles')
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="{{ $fontStylesheet }}" as="style">
+    <link rel="stylesheet" href="{{ $fontStylesheet }}" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="{{ $fontStylesheet }}"></noscript>
     
     <style>
         :root {
@@ -85,8 +95,7 @@
     @include('layouts.partials._whatsapp-float')
     @include('layouts.partials._footer')
 
-<script src="https://cdn.tinymce.com/6/tinymce.min.js" referrerpolicy="origin"></script>
-    <script src="/js/app.js"></script>
+    <script src="/js/app.js" defer></script>
     @stack('scripts')
 </body>
 </html>
